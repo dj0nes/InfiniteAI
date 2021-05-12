@@ -1,15 +1,15 @@
 //==============================================================================
-// AoMod AI
-// AoModAIMapSpec.xs
+// InfiniteAI
+// InfiniteAIMapSpec.xs
 // This is a modification of Georg Kalus' extension of the default aomx ai file
 // by Loki_GdD
 //
 // Contains all map-specific stuff
-// If you want the AoMod ai to deal with your rms, you would need to add the
+// If you want the InfiniteAI to deal with your rms, you would need to add the
 // following:
 // 1. insert a line for your rms in preInitMap() in the appropriate block
 // depending on whether you have a island map (transport map) or a water map
-// (water but no transports required) or a land map where the AoMod ai can't even
+// (water but no transports required) or a land map where the InfiniteAI can't even
 // fish.
 // 2. If you have made a map that needs special treatment like vinlandsaga,
 // you would need to add a line in the corresponding block for the "subtype" of

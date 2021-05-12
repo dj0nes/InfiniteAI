@@ -1,13 +1,13 @@
 //==============================================================================
-// AoMod AI
-// AoModAI.xs
+// InfiniteAI
+// InfiniteAI.xs
 // This is a modification of Georg Kalus' extension of the default aomx ai file
 // by Loki_GdD
 // and... slightly modified by Retherichus, to ensure online play without desyncs.
 // as well with some other fixes.. though! all credit still goes to Loki_GdD!
 //
-// This is the main ai file. If you want to use AoMod ai in your scenario,
-// this would be the file you need to select. All other AoMod*.xs files are
+// This is the main ai file. If you want to use InfiniteAI in your scenario,
+// this would be the file you need to select. All other InfiniteAI*.xs files are
 // just helper files. They are no stand-alone ai files.
 //==============================================================================
 
@@ -324,7 +324,7 @@ extern int gExaminationID = -1;
 extern int MigrationAreaID = -1;
 extern int HealDefPlan = -1;
 extern int gSomeData = -1;
-extern bool AoModAllies = false;
+extern bool InfiniteAIAllies = false;
 extern const int Tellothers = 30;
 extern const int admiralTellothers = 31;
 extern const int AttackTarget = 35;
@@ -361,51 +361,51 @@ extern const int PlayersData = 100;
 
 //==============================================================================
 //Basics Include.
-include "AoModAIBasics.xs";
+include "InfiniteAIBasics.xs";
 
 // Placeholder Reth
-include "AoModAiExtra.xs";
+include "InfiniteAIExtra.xs";
 //==============================================================================
 
 //==============================================================================
 //BuildRules Include.
-include "AoModAIBuild.xs";
+include "InfiniteAIBuild.xs";
 
 //==============================================================================
 //Economy Include.
-include "AoModAIEcon.xs";
+include "InfiniteAIEcon.xs";
 
 //==============================================================================
 //God Powers Include.
-include "AoModAIGPs.xs";
+include "InfiniteAIGPs.xs";
 
 //==============================================================================
 //Map Specifics Include.
-include "AoModAIMapSpec.xs";
+include "InfiniteAIMapSpec.xs";
 
 //==============================================================================
 //Military Include.
-include "AoModAIMil.xs";
+include "InfiniteAIMil.xs";
 
 //==============================================================================
 //Naval Include.
-include "AoModAINaval.xs";
+include "InfiniteAINaval.xs";
 
 //==============================================================================
 //Personality Include.
-include "AoModAIPers.xs";
+include "InfiniteAIPers.xs";
 
 //==============================================================================
 //Progress Include.
-include "AoModAIProgr.xs";
+include "InfiniteAIProgr.xs";
 
 //==============================================================================
 //TechRules Include.
-include "AoModAITechs.xs";
+include "InfiniteAITechs.xs";
 
 //==============================================================================
 //trainRules Include.
-include "AoModAITrain.xs";
+include "InfiniteAITrain.xs";
 
 //==============================================================================
 rule updatePlayerToAttack   //Updates the player we should be attacking.
@@ -465,7 +465,7 @@ inactive
     if (actualPlayerID != -1)
 	aiSetMostHatedPlayerID(actualPlayerID);
 
-	if (AoModAllies == true)
+	if (InfiniteAIAllies == true)
 	{ 
 		if (aiGetCaptainPlayerID(cMyID) != cMyID)
 		return;
@@ -1218,7 +1218,7 @@ active
 		}
 	}
 	
-    if ((AoModAllies == true) && (kbGetAge() > cAge1))
+    if ((InfiniteAIAllies == true) && (kbGetAge() > cAge1))
     { 
 		if (((xsGetTime() - lastRequestTime) > 300000) && ((xsGetTime() - gLastSentTime) > 120000))
 		{

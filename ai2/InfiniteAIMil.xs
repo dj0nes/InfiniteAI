@@ -1,6 +1,6 @@
 //==============================================================================
-// AoMod AI
-// AoModAIMil.xs
+// InfiniteAI
+// InfiniteAIMil.xs
 // This is a modification of Georg Kalus' extension of the default aomx ai file
 // by Loki_GdD
 //
@@ -103,7 +103,7 @@ inactive
 					aiPlanSetDesiredPriority(defendPlanID, 60);
 				}
 				
-				if ((AoModAllies == true) && (secondsUnderAttack > 5) && 
+				if ((InfiniteAIAllies == true) && (secondsUnderAttack > 5) && 
                 (enemyMilUnitsInR80 > numMilUnitsInDefPlan))
                 {
 					if (xsGetTime() - ResourceTimer > 1*20*1000)
@@ -1675,7 +1675,7 @@ inactive
 		}
 	}
     
-    if ((AoModAllies == true) && (aEnemyTCID != -1) && (aiGetCaptainPlayerID(cMyID) != cMyID) && (xsGetTime() < aLastTCIDTime + 10*60*1000))
+    if ((InfiniteAIAllies == true) && (aEnemyTCID != -1) && (aiGetCaptainPlayerID(cMyID) != cMyID) && (xsGetTime() < aLastTCIDTime + 10*60*1000))
 	{ 
         int Owner = kbUnitGetOwner(aEnemyTCID);
         if ((Owner > 0) && (kbIsPlayerEnemy(Owner) == true))
@@ -1745,7 +1745,7 @@ inactive
         lastTargetUnitID = targetSettlementID;
         lastTargetCount = 0;
 	}
-	if ((AoModAllies == true) && (targetSettlementID >= 0) && (aiGetCaptainPlayerID(cMyID) == cMyID) && (gTransportMap == false))
+	if ((InfiniteAIAllies == true) && (targetSettlementID >= 0) && (aiGetCaptainPlayerID(cMyID) == cMyID) && (gTransportMap == false))
 	MessageRel(cPlayerRelationAlly, cAttackTC, targetSettlementID);	
     
     gEnemySettlementAttPlanID = enemySettlementAttPlanID;

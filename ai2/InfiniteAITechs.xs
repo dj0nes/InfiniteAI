@@ -1,4 +1,4 @@
-//AoModAITechs.xs
+//InfiniteAITechs.xs
 //This file contains all tech rules
 //by Loki_GdD
 

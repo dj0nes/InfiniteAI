@@ -1,6 +1,6 @@
 <AI>
-   <script>AoModAIAttacker</script>
-   <name>AoMod AI (Attacker)</name>
+   <script>InfiniteAIAttacker</script>
+   <name>InfiniteAI (Attacker)</name>
    <playerNames>
       <name>Imhotep<culture>Egyptian</culture></name>
       <name>Miw-sher<culture>Egyptian</culture></name>

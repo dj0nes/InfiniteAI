@@ -1,4 +1,4 @@
-//AoModAIBuild.xs
+//InfiniteAIBuild.xs
 //This file contains all build rules
 //by Loki_GdD
 

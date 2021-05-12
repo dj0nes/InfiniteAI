@@ -1,6 +1,6 @@
 <AI>
-   <script>AoModAIDefault</script>
-   <name>AoMod AI</name>
+   <script>InfiniteAIDefault</script>
+   <name>Infinite AI</name>
    <playerNames>
       <name>Imhotep<culture>Egyptian</culture></name>
       <name>Miw-sher<culture>Egyptian</culture></name>

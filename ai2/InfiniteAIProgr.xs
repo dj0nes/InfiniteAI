@@ -1,6 +1,6 @@
 //==============================================================================
-// AoMod AI
-// AoModAIProgr.xs
+// InfiniteAI
+// InfiniteAIProgr.xs
 // This is a modification of Georg Kalus' extension of the default aomx ai file
 // by Loki_GdD
 //

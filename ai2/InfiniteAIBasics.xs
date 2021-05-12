@@ -1,6 +1,6 @@
 //==============================================================================
-// AoMod AI
-// AoModAIBasics.xs
+// InfiniteAI
+// InfiniteAIBasics.xs
 // This is a modification of Georg Kalus' extension of the default aomx ai file
 // by Loki_GdD
 //
@@ -1721,7 +1721,7 @@ int CreateBaseInBackLoc(int BaseID = -1, float Distance = 0, float baseRadius = 
 }
 
 // Stolen from BD :)
-int getRandomPlayerByRel(int Relation = -1, int exludePlayer = -1, bool AoModAllyReq = false)
+int getRandomPlayerByRel(int Relation = -1, int exludePlayer = -1, bool InfiniteAIAllyReq = false)
 {
    int retVal = -1;
    int matchCount = 0;
@@ -1729,9 +1729,9 @@ int getRandomPlayerByRel(int Relation = -1, int exludePlayer = -1, bool AoModAll
    
    for (matchIndex = 1; < cNumberPlayers)
    {
-      if ((AoModAllyReq == false) && (Relation == cPlayerRelationAlly) && (kbIsPlayerAlly(matchIndex) == true) && (kbHasPlayerLost(matchIndex) == false) && (matchIndex != cMyID) && (matchIndex != exludePlayer))
+      if ((InfiniteAIAllyReq == false) && (Relation == cPlayerRelationAlly) && (kbIsPlayerAlly(matchIndex) == true) && (kbHasPlayerLost(matchIndex) == false) && (matchIndex != cMyID) && (matchIndex != exludePlayer))
       matchCount = matchCount + 1;
-      if ((AoModAllyReq == true) && (aiPlanGetUserVariableInt(gSomeData, PlayersData+matchIndex, 0) == 1) && (Relation == cPlayerRelationAlly) 
+      if ((InfiniteAIAllyReq == true) && (aiPlanGetUserVariableInt(gSomeData, PlayersData+matchIndex, 0) == 1) && (Relation == cPlayerRelationAlly) 
 	  && (kbIsPlayerAlly(matchIndex) == true) && (kbHasPlayerLost(matchIndex) == false) && (matchIndex != cMyID) && (matchIndex != exludePlayer))
       matchCount = matchCount + 1;   
       if ((Relation == cPlayerRelationEnemy) && (kbIsPlayerEnemy(matchIndex) == true) && (kbHasPlayerLost(matchIndex) == false) && (matchIndex != 0) && (matchIndex != exludePlayer))
@@ -1744,9 +1744,9 @@ int getRandomPlayerByRel(int Relation = -1, int exludePlayer = -1, bool AoModAll
    matchCount = 0;
    for (matchIndex = 1; < cNumberPlayers)
    {
-      if ((AoModAllyReq == false) && (Relation == cPlayerRelationAlly) && (kbIsPlayerAlly(matchIndex) == true) && (kbHasPlayerLost(matchIndex) == false) && (matchIndex != cMyID) && (matchIndex != exludePlayer))
+      if ((InfiniteAIAllyReq == false) && (Relation == cPlayerRelationAlly) && (kbIsPlayerAlly(matchIndex) == true) && (kbHasPlayerLost(matchIndex) == false) && (matchIndex != cMyID) && (matchIndex != exludePlayer))
       matchCount = matchCount + 1;
-      if ((AoModAllyReq == true) && (aiPlanGetUserVariableInt(gSomeData, PlayersData+matchIndex, 0) == 1) && (Relation == cPlayerRelationAlly) 
+      if ((InfiniteAIAllyReq == true) && (aiPlanGetUserVariableInt(gSomeData, PlayersData+matchIndex, 0) == 1) && (Relation == cPlayerRelationAlly) 
 	  && (kbIsPlayerAlly(matchIndex) == true) && (kbHasPlayerLost(matchIndex) == false) && (matchIndex != cMyID) && (matchIndex != exludePlayer))
       matchCount = matchCount + 1;   
       if ((Relation == cPlayerRelationEnemy) && (kbIsPlayerEnemy(matchIndex) == true) && (kbHasPlayerLost(matchIndex) == false) && (matchIndex != 0) && (matchIndex != exludePlayer))

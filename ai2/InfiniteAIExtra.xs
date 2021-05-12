@@ -1,4 +1,4 @@
-//File: AoModAiExtra.xs
+//File: InfiniteAIExtra.xs
 //By Retherichus
 //I'm so happy that you made it this far! this is where you'll find some of the code I've added to the Ai.
 //I do plan on putting every change into this file eventually... 
@@ -116,10 +116,10 @@ void Comms(int PlayerID = -1)
 		
 		if ((iPromptType == Tellothers) || (iPromptType == admiralTellothers))
 		{
-			AoModAllies = true;
+			InfiniteAIAllies = true;
 			string PlayerType = "Undefined";
 			if (iPromptType == Tellothers)
-			PlayerType = "AoModAI";
+			PlayerType = "InfiniteAI";
 			if (iPromptType == admiralTellothers)
 			PlayerType = "AdmiralAI";
 			
@@ -337,7 +337,7 @@ void initRethlAge1(void)  // Am I doing this right??
 		aiPlanAddUserVariableString(gSomeData, ThirdUnit, "Tertiary unit ", 1);
 		
 		//Players
-		aiPlanAddUserVariableString(gSomeData, PlayersData, "=-------- AoModAI Allies --------", 1);
+		aiPlanAddUserVariableString(gSomeData, PlayersData, "=-------- InfiniteAI Allies --------", 1);
         for (i = 1; < cNumberPlayers)
         {
            aiPlanAddUserVariableInt(gSomeData, PlayersData+i, "Player "+i, 1);
@@ -1055,7 +1055,7 @@ Group Donations
 			int donateWAmount = 100;
 			int donateGAmount = 100;
 			int VillagerScore = kbUnitCount(actualPlayerID, cUnitTypeAbstractVillager, cUnitStateAlive);
-			int AoModAlly = aiPlanGetUserVariableInt(gSomeData, PlayersData+actualPlayerID, 0);
+			int InfiniteAIAlly = aiPlanGetUserVariableInt(gSomeData, PlayersData+actualPlayerID, 0);
 			
 			if (kbGetCultureForPlayer(actualPlayerID) == cCultureAtlantean)
 			VillagerScore = VillagerScore * 3;
@@ -1072,27 +1072,27 @@ Group Donations
 			
 			if (foodSupply > 2000)
 			{
-		        if (AoModAlly == 1)
+		        if (InfiniteAIAlly == 1)
 				MessagePlayer(actualPlayerID, ExtraFood);
 				else
 				aiTribute(actualPlayerID, cResourceFood, donateFAmount);
 			}
 			if (woodSupply > 2000)
 			{
-		        if (AoModAlly == 1)
+		        if (InfiniteAIAlly == 1)
 				MessagePlayer(actualPlayerID, ExtraWood);
 				else		
 				aiTribute(actualPlayerID, cResourceWood, donateWAmount);
 			}
 			if (goldSupply > 2000)
 			{
-		        if (AoModAlly == 1)
+		        if (InfiniteAIAlly == 1)
 				MessagePlayer(actualPlayerID, ExtraGold);
 				else		
 				aiTribute(actualPlayerID, cResourceGold, donateGAmount);
 			}
 			
-			if ((iTcs >= 1) && (AoModAlly == 0))
+			if ((iTcs >= 1) && (InfiniteAIAlly == 0))
 			{
 				if ((VillagerScore <= 6) && (foodSupply > 350) && (kbGetAge() > cAge2)) // Ally appears to be dying, try to save it!
 				{
@@ -1667,7 +1667,7 @@ inactive
 		xsDisableRule("defendAlliedBase");
 		xsDisableRule("Helpme");
 		IhaveAllies = false;
-		AoModAllies = false;
+		InfiniteAIAllies = false;
 	}
 }
 

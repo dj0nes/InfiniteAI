@@ -1,4 +1,4 @@
-//AoModAITrain.xs
+//InfiniteAITrain.xs
 //This file contains all train rules
 //by Loki_GdD
 

@@ -1,6 +1,6 @@
 <AI>
-   <script>AoModAIEconomical</script>
-   <name>AoMod AI (Econ)</name>
+   <script>InfiniteAIEconomical</script>
+   <name>InfiniteAI (Econ)</name>
    <playerNames>
       <name>Imhotep<culture>Egyptian</culture></name>
       <name>Miw-sher<culture>Egyptian</culture></name>
