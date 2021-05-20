@@ -408,6 +408,9 @@ include "InfiniteAITechs.xs";
 include "InfiniteAITrain.xs";
 
 //==============================================================================
+include "InfiniteUtils.xs";
+
+//==============================================================================
 rule updatePlayerToAttack   //Updates the player we should be attacking.
 minInterval 27 //starts in cAge1
 inactive
@@ -3823,6 +3826,8 @@ inactive
 //==============================================================================
 void main(void)
 {
+    if (ShowAIDebug == true) aiEcho("AI start at time "+xsGetTime());
+
     //Set our random seed.  "-1" is a random init.
     aiRandSetSeed(-1);
 	
@@ -3832,12 +3837,20 @@ void main(void)
     preInitMap();
     persDecidePersonality();     // Set the control variables before anything else
 	
-    //Go.
-    if (cvDelayStart != true)
-	init();
-    else
-	xsDisableRule("age1Progress");
+    //Wait, then go.
+	xsEnableRule("initAfterDelay");
 }
+
+rule initAfterDelay            // init ai setup after this number of seconds, used to check pooulation
+   inactive
+   minInterval 1
+{
+    if (ShowAIDebug == true) aiEcho("initAfterDelay at time " + xsGetTime());
+    initInfinitePopModeCheck(); // can use infinitePopMode variable after this
+    init();
+    xsDisableSelf();
+}
+
 //==============================================================================
 // god power handler
 //==============================================================================
