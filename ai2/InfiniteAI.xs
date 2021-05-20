@@ -270,7 +270,7 @@ mutable bool mapRestrictsMarketAttack() { }
 mutable void pullBackUnits(int planID = -1, vector retreatPosition = cInvalidVector) { }
 
 // Reth Placeholder for Int's etc
-extern bool ShowAIDebug = false;
+extern bool ShowAIDebug = true;
 extern int KOTHTransportPlan = -1;
 extern int KOTHTHomeTransportPlan = -1;
 extern int SendBackCount = 0;
