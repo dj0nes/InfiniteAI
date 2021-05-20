@@ -1,6 +1,6 @@
 <AI>
-   <script>InfiniteAIEconomical</script>
-   <name>InfiniteAI (Econ)</name>
+   <script>InfiniteAIConqueror</script>
+   <name>InfiniteAI (Conqueror)</name>
    <playerNames>
       <name>Imhotep<culture>Egyptian</culture></name>
       <name>Miw-sher<culture>Egyptian</culture></name>
