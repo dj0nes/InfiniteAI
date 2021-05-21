@@ -360,6 +360,8 @@ extern const int PlayersData = 100;
 
 
 //==============================================================================
+include "InfiniteUtils.xs";
+
 //Basics Include.
 include "InfiniteAIBasics.xs";
 
@@ -406,9 +408,6 @@ include "InfiniteAITechs.xs";
 //==============================================================================
 //trainRules Include.
 include "InfiniteAITrain.xs";
-
-//==============================================================================
-include "InfiniteUtils.xs";
 
 //==============================================================================
 rule updatePlayerToAttack   //Updates the player we should be attacking.
