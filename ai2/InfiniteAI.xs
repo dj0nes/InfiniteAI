@@ -715,6 +715,8 @@ active
 
 
 //==============================================================================
+int prevEconPop = -1;
+int prevMilPop = -1;
 void updateEM(int econPop=-1, int milPop=-1, float econPercentage=0.5,
               float rootEscrow=0.2, float econFoodEscrow=0.5, float econWoodEscrow=0.5,
               float econGoldEscrow=0.5, float econFavorEscrow=0.5)
@@ -745,6 +747,7 @@ void updateEM(int econPop=-1, int milPop=-1, float econPercentage=0.5,
             // Adjust it for econ/mil scale.  If military, soften the decrease, if economic, preserve full.
             milPopDelta = milPopDelta / (2.0 + cvMilitaryEconSlider);
             milPop = milPop + (milPop * milPopDelta);
+            echo("updateEM - military pop decreased to: " + milPop);
         }
         if (milPop < 40)
             milPop = 40;
@@ -808,15 +811,19 @@ void updateEM(int econPop=-1, int milPop=-1, float econPercentage=0.5,
         if ( (aiGetGameMode() == cGameModeLightning) && (fishCount > 5) )
             fishCount = 5;
         vilPop = vilPop - fishCount; // Less fishing
+        echo("updateEM - fishCount = " + fishCount);
+        echo("updateEM - (vilPop - fishCount) = " + vilPop);
     }
 
     int numTradeUnits = kbUnitCount(cMyID, cUnitTypeAbstractTradeUnit, cUnitStateAlive);
-    if (numTradeUnits > 0)
+    if (numTradeUnits > 0 && infinitePopMode == false)
     {
         int tradeCount = numTradeUnits;
         if ((aiGetGameMode() == cGameModeLightning) && (tradeCount > 5))
             tradeCount = 5;
         vilPop = vilPop - tradeCount; // Vils = total-trade
+        echo("updateEM - tradeCount = " + tradeCount);
+        echo("updateEM - (vilPop - tradeCount) = " + vilPop);
     }
 
     if ((vilPop < 15) && (kbGetAge() > cAge1))
@@ -864,6 +871,15 @@ void updateEM(int econPop=-1, int milPop=-1, float econPercentage=0.5,
     aiPlanSetVariableInt(gCivPopPlanID, cTrainPlanNumberToMaintain, 0, vilPop);
     if (gSomeData != -1)
         aiPlanSetUserVariableInt(gSomeData, 7, 0, vilPop);
+
+    if(econPop != prevEconPop) {
+        echo("updateEM - econPop set to: " + econPop);
+        prevEconPop = econPop;
+    }
+    if(milPop != prevMilPop) {
+        echo("updateEM - milPop set to: " + milPop);
+        prevMilPop = milPop;
+    }
 }
 
 //==============================================================================
