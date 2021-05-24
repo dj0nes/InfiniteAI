@@ -2886,3 +2886,68 @@ inactive
         }
     }
 }
+
+rule updatePlayerToAttack   //Updates the player we should be attacking.
+        minInterval 27 //starts in cAge1
+inactive
+{
+    static int lastTargetPlayerIDSaveTime = -1;
+    static int lastTargetPlayerID = -1;
+    static int randNum = 0;
+    static bool increaseStartIndex = false;
+
+    if (ChangeMHP == true)
+    {
+        if (xsGetTime() > MHPTime + 1*60*1000)
+            ChangeMHP = false;
+        return;
+    }
+    //Determine a random start index for our hate loop.
+    static int startIndex = -1;
+    if ((startIndex < 0) || (xsGetTime() > lastTargetPlayerIDSaveTime + (10 + randNum)*60*1000) && (aiRandInt(5) < 1))
+        startIndex = getRandomPlayerByRel(cPlayerRelationEnemy);
+
+    int comparePlayerID = -1;
+    for (i = 0; < cNumberPlayers)
+    {
+        //If we're past the end of our players, go back to the start.
+        int actualIndex = i + startIndex;
+        if (actualIndex >= cNumberPlayers)
+            actualIndex = actualIndex - cNumberPlayers;
+        if (actualIndex <= 0)
+            continue;
+        if ((kbIsPlayerEnemy(actualIndex) == true) &&
+            (kbIsPlayerResigned(actualIndex) == false) &&
+            (kbHasPlayerLost(actualIndex) == false))
+        {
+            comparePlayerID = actualIndex;
+            break;
+        }
+    }
+
+    //Pass the comparePlayerID into the AI to see what he thinks.  He'll take care
+    //of modifying the player in the event of wonders, etc.
+    int actualPlayerID = -1;
+
+    if (cvPlayerToAttack == -1)
+        actualPlayerID = aiCalculateMostHatedPlayerID(comparePlayerID);
+    else
+        actualPlayerID = cvPlayerToAttack;
+
+    if (actualPlayerID != lastTargetPlayerID)
+    {
+        lastTargetPlayerID = actualPlayerID;
+        lastTargetPlayerIDSaveTime = xsGetTime();
+        randNum = aiRandInt(5);
+    }
+
+    if (actualPlayerID != -1)
+        aiSetMostHatedPlayerID(actualPlayerID);
+
+    if (InfiniteAIAllies == true)
+    {
+        if (aiGetCaptainPlayerID(cMyID) != cMyID)
+            return;
+        MessageRel(cPlayerRelationAlly, AttackTarget, aiGetMostHatedPlayerID());
+    }
+}
