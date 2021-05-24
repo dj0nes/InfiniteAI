@@ -1,3 +1,5 @@
+extern bool infinitePopMode = false; // for check if we have infinite population
+
 //==============================================================================
 //Map-Related Globals.
 extern bool gWaterMap=false;              // Set true if fishing is likely to be good.

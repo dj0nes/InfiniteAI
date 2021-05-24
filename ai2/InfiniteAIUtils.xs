@@ -94,6 +94,19 @@ extern int cvMapSubType = -1;
 //for trigonometric functions
 extern float PI = 3.141592;
 
+
+void echo(string msg="") {
+    if(ShowAIDebug) {
+        aiEcho(msg);
+    }
+}
+
+
+bool initInfinitePopModeCheck(void) {
+    infinitePopMode = kbGetPop() == 0;
+}
+
+
 //==============================================================================
 bool equal(vector left=cInvalidVector, vector right=cInvalidVector) //true if the given vectors are equal
 {
