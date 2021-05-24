@@ -2035,8 +2035,10 @@ rule LaunchAttacks
 minInterval 12
 inactive
 {
-    if (ShouldIAgeUp() == true)
+    if (ShouldIAgeUp() == true) {
+        echo("LaunchAttacks: skipping because I should age up");
         return;
+    }
     int mainBaseID = kbBaseGetMainID(cMyID);
     vector mainBaseLocation = kbBaseGetLocation(cMyID, mainBaseID);
     int numEnemyMilUnitsNearMBInR80 = getNumUnitsByRel(cUnitTypeLogicalTypeLandMilitary, cUnitStateAlive, -1, cPlayerRelationEnemy, mainBaseLocation, 80.0, true);
@@ -2047,12 +2049,29 @@ inactive
     int RaidingAActive = findPlanByString("Raiding Party", cPlanAttack);
     int SettlementAActive = findPlanByString("enemy settlement attack plan", cPlanAttack);
 
-    if ((numEnemyTitansNearMBInR85 > 0) || (numEnemyMilUnitsNearMBInR80 > 10) || (numEnemyMilUnitsNearDefPlan > 10) || (kbGetAge() == cAge2) && (LandAActive > 0)
-        || (LandAActive > 0) && (SettlementAActive > 0) && (RaidingAActive > 0) || (kbGetAge() == cAge2) && (xsGetTime() >= 15*60*1000))
+    if ((numEnemyTitansNearMBInR85 > 0) ||
+        (numEnemyMilUnitsNearMBInR80 > 10) ||
+        (numEnemyMilUnitsNearDefPlan > 10))
+    {
+        echo("LaunchAttacks: skipping because enemies are near main base");
         return;
+    }
+
+    if((LandAActive > 0) && (SettlementAActive > 0) && (RaidingAActive > 0))
+    {
+        echo("LaunchAttacks: skipping because there are already land, raiding, and settlement attack plans");
+        return;
+    }
+
+    if ((kbGetAge() == cAge2) && (LandAActive > 0 || xsGetTime() >= 15*60*1000))
+    {
+        echo("LaunchAttacks: skipping because it's age 2 and we have a land attack plan, or it's too late (15m+)");
+        return;
+    }
 
     if (ReadyToAttack() == true)
     {
+        echo("LaunchAttacks: ready to attack, enabling attack rules");
         if ((LandAActive > 0) && (SettlementAActive > 0))
         {
             xsSetRuleMinInterval("createRaidingParty", 2);

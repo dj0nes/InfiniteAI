@@ -2643,7 +2643,7 @@ void init(void)
         rushSize = 20; // Give unitpicker something to do...
 
     if ((cMyCulture == cCultureNorse) || (cMyCulture == cCultureEgyptian))
-        gRushUPID=initUnitPicker("Rush", numTypes, -1, -1, rushSize, rushSize*1.25, 3); // Rush with rushSize pop slots of 3 types and 2 buildings.
+        gRushUPID=initUnitPicker("Rush", numTypes, -1, -1, rushSize, rushSize*1.25, 3); // Rush with rushSize pop slots of 3 types and 3 buildings.
     else
         gRushUPID=initUnitPicker("Rush", numTypes, -1, -1, rushSize, rushSize*1.25, 2); // Rush with rushSize pop slots of 3 types and 2 buildings.
     kbUnitPickSetGoalCombatEfficiencyType(gRushUPID, cUnitTypeLogicalTypeLandMilitary);
@@ -2696,8 +2696,10 @@ void init(void)
         {
             //Create the attack.
             gRushGoalID = createSimpleAttackGoal("Rush Land Attack", -1, gRushUPID, rushCount+1, 1, 1, kbBaseGetMainID(cMyID), false);
+            // todo: tweak
             if (gRushGoalID > 0)
             {
+                echo("init: Rush Land Attack goal created: " + gRushGoalID);
                 //Go for hitpoint upgrade first.
                 aiPlanSetVariableInt(gRushGoalID, cGoalPlanUpgradeFilterType, 0, cUpgradeTypeHitpoints);
             }
@@ -2708,6 +2710,8 @@ void init(void)
             gIdleAttackGID = createSimpleAttackGoal("Idle Force", -1, gRushUPID, -1, 1, 1, kbBaseGetMainID(cMyID), false);
             if (gIdleAttackGID >= 0)
             {
+                echo("init: Idle Force goal created, no rush land attack, id: " + gIdleAttackGID);
+
                 aiPlanSetVariableBool(gIdleAttackGID, cGoalPlanIdleAttack, 0, true);
                 aiPlanSetVariableInt(gIdleAttackGID, cGoalPlanUpgradeFilterType, 0, cUpgradeTypeHitpoints);
                 //Reset the rushUPID down to 3 unit type and 1 building.
@@ -2752,6 +2756,8 @@ void init(void)
         gLandAttackGoalID = createSimpleAttackGoal("Main Land Attack", -1, gLateUPID, -1, lateAttackAge, -1, kbBaseGetMainID(cMyID), true);
         if (gLandAttackGoalID >= 0)
         {
+            echo("init: Main Land Attack goal (Late Age Attack) created: " + gLandAttackGoalID);
+
             //If this is easy, this is an idle attack.
             if (aiGetWorldDifficulty() == cDifficultyEasy)
                 aiPlanSetVariableBool(gLandAttackGoalID, cGoalPlanIdleAttack, 0, true);

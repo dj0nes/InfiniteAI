@@ -1969,7 +1969,10 @@ inactive
         (currentPop < 100) || (aiPlanGetNumberUnits(gDefendPlanID, cUnitTypeHumanSoldier) < 4)
         || (gEnemyWonderDefendPlan > 0) || (numEnemyTitansNearMBInR60 > 0) || (numAttEnemyTitansNearMBInR85 > 0)
         || (numEnemyTitansNearDefBInR35 > 0) || (numAttEnemyTitansNearDefBInR55 > 0))
+    {
+        echo("createRaidingParty: skipping raiding party creation");
         return;
+    }
 
     static int lastTargetUnitID = -1;
     static int lastTargetCount = 0;
@@ -2104,6 +2107,7 @@ inactive
     if (raidingPartyAttackID < 0)
         return;
 
+    echo("Raiding Party attack plan created: " + raidingPartyAttackID);
     aiPlanSetVariableInt(raidingPartyAttackID, cAttackPlanPlayerID, 0, Owner);
     aiPlanSetVariableInt(raidingPartyAttackID, cAttackPlanSpecificTargetID, 0, targetUnitID);
     aiPlanSetVariableBool(raidingPartyAttackID, cAttackPlanAutoUseGPs, 0, false);
