@@ -1,70 +1,22 @@
-//==============================================================================
-// InfiniteAI
-// InfiniteAI.xs
-// This is a modification of Georg Kalus' extension of the default aomx ai file
-// by Loki_GdD
-// and... slightly modified by Retherichus, to ensure online play without desyncs.
-// as well with some other fixes.. though! all credit still goes to Loki_GdD!
-//
-// This is the main ai file. If you want to use InfiniteAI in your scenario,
-// this would be the file you need to select. All other InfiniteAI*.xs files are
-// just helper files. They are no stand-alone ai files.
-//==============================================================================
+// the main AI file, can be used as a target for scenarios
+// select a personality-specific file instead to avoid random selection
 
-//==============================================================================
-include "InfiniteAIglobals.xs";
+include "InfiniteAIglobals.xs"; // global and const declarations
 include "InfiniteUtils.xs";
-
-//Basics Include.
-include "InfiniteAIBasics.xs";
-
-// Placeholder Reth
-include "InfiniteAIExtra.xs";
-//==============================================================================
-
-//==============================================================================
-//BuildRules Include.
-include "InfiniteAIBuild.xs";
-
-//==============================================================================
-//Economy Include.
+include "InfiniteAIBasics.xs"; // utilities
+include "InfiniteAIExtra.xs"; // Reth rules
+include "InfiniteAIBuild.xs"; // BuildRules
 include "InfiniteAIEcon.xs";
 include "InfiniteAIEconForecastUtils.xs";
 include "InfiniteAIEconEscrow.xs";
-
-//==============================================================================
-//God Powers Include.
-include "InfiniteAIGPs.xs";
-
-//==============================================================================
-//Map Specifics Include.
-include "InfiniteAIMapSpec.xs";
-
-//==============================================================================
-//Military Include.
-include "InfiniteAIMil.xs";
-
-//==============================================================================
-//Naval Include.
-include "InfiniteAINaval.xs";
-
-//==============================================================================
-//Personality Include.
-include "InfiniteAIPers.xs";
-
-//==============================================================================
-//Progress Include.
-include "InfiniteAIProgr.xs";
-
-//==============================================================================
-//TechRules Include.
-include "InfiniteAITechs.xs";
-
-//==============================================================================
-//trainRules Include.
-include "InfiniteAITrain.xs";
-
-
+include "InfiniteAIGPs.xs"; // God Powers
+include "InfiniteAIMapSpec.xs"; // Map Specifics
+include "InfiniteAIMil.xs"; // Military
+include "InfiniteAINaval.xs"; // naval
+include "InfiniteAIPers.xs"; // personality
+include "InfiniteAIProgr.xs"; // Progress
+include "InfiniteAITechs.xs"; //TechRules Include
+include "InfiniteAITrain.xs"; // trainRules Include
 include "InfiniteAIInit.xs";
 include "InfiniteAIAgeHandlers.xs";
 
@@ -87,7 +39,7 @@ void main(void)
 }
 
 
-rule initAfterDelay            // init ai setup after this number of seconds, used to check pooulation
+rule initAfterDelay // init ai setup after this number of seconds, used to check population
 inactive
         minInterval 1
 {
