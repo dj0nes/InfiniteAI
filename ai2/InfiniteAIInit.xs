@@ -327,11 +327,9 @@ void init(void)
         cvOffenseDefenseSlider = 1.0;
     if (cvOffenseDefenseSlider < -1.0)
         cvOffenseDefenseSlider = -1.0;
+
+    //Startup messages
     echo("Sliders are...RushBoom "+cvRushBoomSlider+", MilitaryEcon "+cvMilitaryEconSlider+", OffenseDefense "+cvOffenseDefenseSlider);
-
-
-
-    //Startup messages.
     echo("Greetings, my name is "+cMyName+".");
     echo("AI Filename='"+cFilename+"'.");
     echo("MapName="+cvRandomMapName+".");

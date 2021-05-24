@@ -449,3 +449,14 @@ extern int cvMapSubType = -1;
 
 //for trigonometric functions
 extern float PI = 3.141592;
+
+// Reth vars
+extern bool mCanIDefendAllies = true;     // Allows the AI to defend his allies.
+extern bool gWallsInDM = true;            // This allows the Ai to build walls in the game mode ''Deathmatch''.
+extern bool gAgeReduceMil = false;         // This will lower the amount of military units the AI will train until Mythic Age, this will also help the AI to advance a little bit faster, more configs below.
+extern bool bWallUp = true;              // This ensures that the Ai will build walls, regardless of personality.
+
+extern bool CanIChat = true;              // This will allow the Ai to send chat messages, such as asking for help if it's in danger.
+extern bool bHouseBunkering = true;       // Makes the Ai bunker up towers with Houses.
+extern bool bWallAllyMB = true;          // Walls up TCs for human allies, only the team captain can do this and MBs are skipped.
+extern bool bWallCleanup = true;          // Prevents the AI from building small wall pieces inside of gates and/or deletes them if one were to slip through the check.
