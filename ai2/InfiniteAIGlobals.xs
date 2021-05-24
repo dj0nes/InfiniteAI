@@ -362,3 +362,90 @@ extern const int MainUnit = 87;
 extern const int SecondaryUnit = 88;
 extern const int ThirdUnit = 89;
 extern const int PlayersData = 100;
+
+//==============================================================================
+// Behavior modifiers - "control variable" sliders that range from -1 to +1 to adjust AI personalities.  Set them in setParameters().
+extern float cvRushBoomSlider = 0.0;         // +1 is extreme rush, -1 is extreme boom.  Rush will age up fast and light
+                                             // with few upgrades, and will start a military sooner.  Booming will hit
+                                             // age 2 earlier, but will buy upgrades sooner, make more villagers, and
+                                             // will put a priority on additional settlements...but starts a military
+                                             // much later.
+extern float cvMilitaryEconSlider = 0.0;     // Works in conjunction with Rush/Boom.  Settings near 1 will put a huge
+                                             // emphasis on military pop and resources, at the expense of the economy.
+                                             // Setting it near -1 will put almost everything into the economy.  This
+                                             // slider loses most of its effect in 4th age once all settlements are claimed
+                                             // Military/Econ at 1.0, Rush/Boom at 1.0:  Quick jump to age 2, rush with almost no vill production.
+                                             // Military 1, Rush/Boom -1:  Late to age 2, normal to age 3 with small military, grab 2 more settlements, then all military
+                                             // Military/Econ -1, Rush/Boom +1:  Jump quickly to age 2, then jump quickly to age 3, delay upgrades and military.
+                                             // Military/Econ -1, Rush/Boom -1:  Almost no military until all settlements are claimed.  Extremely risky boom.
+extern float cvOffenseDefenseSlider = 0.0;   // Set high (+1+, causes all military investment in units.  Set low (-1), most military investment in towers and walls.
+extern float cvSliderNoise = 0.3;            // The amount of random variance in slider variables.  Set it to 0.0 to have the values locked.  0.3 allows some variability.
+                                             // Must be non-negative.  Resultant slider values will be clipped to range -1 through +1.
+
+// Minor god choices.  These MUST be made in setParameters and not changed after that.
+// -1 means the AI chooses as it normally would.  List of god names follows.
+extern int cvAge2GodChoice = -1;
+extern int cvAge3GodChoice = -1;
+extern int cvAge4GodChoice = -1;
+
+// DelayStart:  Setting this true will suspend ai initialization.  To resume, call setDelayStart(false).
+extern bool cvDelayStart = false;
+
+// MaxAge:  Sets the age limit for this player.  Be careful to use cAge1...cAge4 constants, like cvMaxAge = cAge2 to
+// limit the player to age 2.  The actual age numbers used by the code are 0...3, so cAge1...cAge4 is much clearer.
+// Set initially in setParameters(), then update dynamically with setMaxAge() if needed.
+extern int cvMaxAge = cAge5;
+
+// MaxGathererPop:  Sets the maximum number of gatherers, but doesn't include fishing boats or trade carts (or dwarves?).
+// Set initially in setParameters(), can be changed dynamically with setMaxGathererPop().
+extern int cvMaxGathererPop = -1;        // -1 turns it off, meaning the scripts can do what they want.  0 means no gatherers.
+
+// MaxMilPop:  The maximum number of military UNITS (not pop slots) that the player can create.
+// Set initially in setParameters(), can be changed dynamically with setMaxMilPop().
+extern int cvMaxMilPop = -1;             // -1 turns it off, meaning the scripts can do what they want.  0 means no military.
+
+// MaxTradePop:  Tells the AI how many trade units to make.  May be changed via setMaxTradePop().  If set to -1, the AI decides on its own.
+extern int cvMaxTradePop = -1;
+
+// OkToAttack:  Setting this false will prevent the AI from using its military units outside of its bases.
+// Setting it true allows the AI to attack at will.  This variable can be changed during the course of the game
+// by using setOkToAttack().
+extern bool cvOkToAttack = true;
+
+// OkToBuildWalls:  Gives the AI permission to build walls if it wants to.  Set it initially in setParamaters, change
+// it later if needed using setOkToBuildWalls().  Setting it true later will FORCE wall-building...the AI decision on its own can
+// only happen at game start.
+extern bool cvOkToBuildWalls = true;
+
+// OkToGatherRelics:  Setting this false will prevent the AI from gathering relics.
+extern bool cvOkToGatherRelics = true;
+
+// OkToResign:  Setting this true will allow the AI to resign when it feels bad.  Setting it false will force it to play to the end.
+extern bool cvOkToResign = true;
+
+// God power activation switches.  Set in setParameters(), can be modified later via cvOkToUseAge*GodPower() calls.
+extern bool cvOkToUseAge1GodPower = true;
+extern bool cvOkToUseAge2GodPower = true;
+extern bool cvOkToUseAge3GodPower = true;
+extern bool cvOkToUseAge4GodPower = true;
+
+// PlayerToAttack:  -1 means not defined.  Number > 0 means attack that player number, overrides mostHatedPlayer.
+extern int cvPlayerToAttack = -1;
+
+// Random map name.  Can be set in setParameters to make scenario AI's adopt map-specific behaviors.  Must be set in setParameters() to be
+// used, there is no way to activate it later.
+
+extern string cvRandomMapName="None";
+// if your scenario needs a special treatment, consider to change "None" to one of these: "Transport Scenario" or "Migration Scenario"
+
+// special maps
+extern const int KOTHMAP = 1;
+extern const int NOMADMAP = 2;
+extern const int SHIMOMAP = 3;
+extern const int VINLANDSAGAMAP = 4;
+extern const int WATERNOMADMAP = 5;
+// nothing special for start...
+extern int cvMapSubType = -1;
+
+//for trigonometric functions
+extern float PI = 3.141592;

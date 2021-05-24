@@ -850,7 +850,7 @@ inactive
         return;
 
     xsSetRuleMinIntervalSelf(27);
-    static int defendCount = 0;  // For plan numbering
+    static int defendCount = 0; // For plan numbering
     int mainBaseID = kbBaseGetMainID(cMyID);
     vector mainBaseLocation = kbBaseGetLocation(cMyID, mainBaseID);
     static int defendPlanStartTime = -1;
@@ -1341,7 +1341,7 @@ inactive
     vector newBaseUnitPosition = kbUnitGetPosition(newBaseUnitID);
     vector mainBaseLocation = kbBaseGetLocation(cMyID, mainBaseID);
 
-    int number = -1;  // For plan numbering
+    int number = -1; // For plan numbering
     if (otherBase1DefPlan == false)
         number = 1;
     else if (otherBase2DefPlan == false)
@@ -2888,7 +2888,7 @@ inactive
 }
 
 rule updatePlayerToAttack   //Updates the player we should be attacking.
-        minInterval 27 //starts in cAge1
+minInterval 27         //starts in cAge1
 inactive
 {
     static int lastTargetPlayerIDSaveTime = -1;
@@ -2954,7 +2954,7 @@ inactive
 
 
 rule ShouldIResign
-        minInterval 10 //starts in cAge1
+minInterval 10         //starts in cAge1
 active
 {
     if (cvOkToResign == false)
@@ -3154,7 +3154,7 @@ void resignHandler(int result =-1)
 
 rule watchForFirstWonderStart   //Look for any wonder being built.  If found, activate
 //the high-speed rule that watches for completion
-minInterval 73 //starts in cAge3    // Hopefully nobody will build one faster than this
+        minInterval 73 //starts in cAge3    // Hopefully nobody will build one faster than this
 inactive
 {
     xsSetRuleMinIntervalSelf(73);
@@ -3387,7 +3387,7 @@ int initUnitPicker(string name="BUG", int numberTypes=1, int minUnits=10,
 
 rule goAndGatherRelics
 inactive
-minInterval 101 //starts in cAge1
+        minInterval 101 //starts in cAge1
 {
     static int gatherRelicStartTime = -1;
 

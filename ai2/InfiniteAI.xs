@@ -2,8 +2,8 @@
 // select a personality-specific file instead to avoid random selection
 
 include "InfiniteAIglobals.xs"; // global and const declarations
-include "InfiniteUtils.xs";
-include "InfiniteAIBasics.xs"; // utilities
+include "InfiniteAIUtils.xs";
+include "InfiniteAIPers.xs"; // personality
 include "InfiniteAIExtra.xs"; // Reth rules
 include "InfiniteAIBuild.xs"; // BuildRules
 include "InfiniteAIEcon.xs";
@@ -13,7 +13,6 @@ include "InfiniteAIGPs.xs"; // God Powers
 include "InfiniteAIMapSpec.xs"; // Map Specifics
 include "InfiniteAIMil.xs"; // Military
 include "InfiniteAINaval.xs"; // naval
-include "InfiniteAIPers.xs"; // personality
 include "InfiniteAIProgr.xs"; // Progress
 include "InfiniteAITechs.xs"; //TechRules Include
 include "InfiniteAITrain.xs"; // trainRules Include
@@ -24,18 +23,11 @@ include "InfiniteAIAgeHandlers.xs";
 void main(void)
 {
     echo("AI start at time "+xsGetTime());
-
-    //Set our random seed.  "-1" is a random init.
-    aiRandSetSeed(-1);
-
-    //Calculate some areas.
-    kbAreaCalculate();
-
-    preInitMap();
+    aiRandSetSeed(-1); // Set our random seed.  "-1" is a random init.
+    kbAreaCalculate(); // Calculate some areas.
+    preInitMap(); // InfiniteAIMapSpec function to adapt behavior based on map
     persDecidePersonality(); // Set the control variables before anything else
-
-    //Wait, then go.
-    xsEnableRule("initAfterDelay");
+    xsEnableRule("initAfterDelay"); //Wait, then go.
 }
 
 

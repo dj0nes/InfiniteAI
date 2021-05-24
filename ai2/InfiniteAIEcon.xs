@@ -1993,7 +1993,7 @@ inactive
     MarketTower = true;
 
     // We have a market for trade, activate the rule to rebuild if lost
-    xsEnableRule("rebuildMarket");  // Will restart process if market is lost
+    xsEnableRule("rebuildMarket"); // Will restart process if market is lost
 
     //Create the market trade plan.
     if (gTradePlanID >= 0)
@@ -2507,7 +2507,7 @@ inactive
 
     //If we're low on infantry, make sure we have at least X pop slots free.
     int availablePopSlots=kbGetPopCap()-kbGetPop();
-    if (availablePopSlots >= 3)  // Room for current vil-in-training and ulfsark
+    if (availablePopSlots >= 3) // Room for current vil-in-training and ulfsark
         return;
 
     //Else, find a villager to transform or delete.
@@ -2609,7 +2609,7 @@ inactive
 
 
 rule findFish   //We don't know if this is a water map...if you see fish, it is.
-        minInterval 2 //starts in cAge1
+minInterval 2         //starts in cAge1
 active
 {
     if ((cRandomMapName == "highland") || (cRandomMapName == "nomad") ||(NoFishing == true) || (cvMapSubType == VINLANDSAGAMAP))
