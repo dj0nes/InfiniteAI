@@ -1,5 +1,5 @@
 <AI>
-   <script>InfiniteAIAttacker</script>
+   <script>InfiniteAI_Attacker</script>
    <name>InfiniteAI (Attacker)</name>
    <playerNames>
       <name>Imhotep<culture>Egyptian</culture></name>
