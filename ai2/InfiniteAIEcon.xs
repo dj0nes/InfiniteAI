@@ -2606,3 +2606,55 @@ inactive
         }
     }
 }
+
+
+rule findFish   //We don't know if this is a water map...if you see fish, it is.
+        minInterval 2 //starts in cAge1
+active
+{
+    if ((cRandomMapName == "highland") || (cRandomMapName == "nomad") ||(NoFishing == true) || (cvMapSubType == VINLANDSAGAMAP))
+    {
+        xsDisableSelf();
+        return;
+    }
+
+
+    if (kbUnitCount(0, cUnitTypeFish) > 0)
+    {
+        gWaterMap=true;
+        //Tell the AI what kind of map we are on.
+        aiSetWaterMap(gWaterMap);
+        xsEnableRule("fishing");
+    }
+    xsDisableSelf();
+}
+
+
+rule spotAgeUpgrades    //detect age upgrades given as starting conditions or via triggers
+minInterval 18 //starts in cAge1
+inactive
+{
+    if ( gLastAgeHandled < kbGetAge() ) // If my current age is higher than the last upgrade I remember...do the handler
+    {
+        if (gLastAgeHandled == cAge1)
+        {
+            age2Handler();
+            return;
+        }
+        else if (gLastAgeHandled == cAge2)
+        {
+            age3Handler();
+            return;
+        }
+        else if (gLastAgeHandled == cAge3)
+        {
+            age4Handler();
+            return;
+        }
+        else if (gLastAgeHandled == cAge4)
+        {
+            age5Handler();
+            xsDisableSelf();
+        }
+    }
+}

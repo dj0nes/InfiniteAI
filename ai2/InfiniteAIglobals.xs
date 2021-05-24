@@ -37,6 +37,7 @@ extern vector gTradeMarketLocation = cInvalidVector; // location of our trade ma
 extern vector gTradeMarketDesiredLocation = cInvalidVector; // location, where we want to build our trade market.
 extern int gExtraMarketUnitID = -1;       // Used to identify the extra market
 extern bool gResetTradeMarket = false;
+extern bool NoFishing = false;            // changed in map specifics, should be safe to init to false
 
 
 //==============================================================================
