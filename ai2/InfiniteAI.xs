@@ -684,7 +684,7 @@ active
                 }
                 kbEscrowFlush(cEconomyEscrowID, cResourceGold, true);
                 kbEscrowFlush(cMilitaryEscrowID, cResourceGold, true);
-                if (ShowAiEcho == true) aiEcho("Flushing wood and gold escrow");
+                echo("Flushing wood and gold escrow");
             }
         }
     }
@@ -712,6 +712,7 @@ active
             aiTaskUnitResearch(mainBaseUnitID, cTechSecretsoftheTitans);
     }
 }
+
 
 //==============================================================================
 void updateEM(int econPop=-1, int milPop=-1, float econPercentage=0.5,
@@ -1549,7 +1550,7 @@ void addTechForecast(int techID=-1)
 void setMilitaryUnitCostForecast(void)
 {
     int upID = -1; // ID of the unit picker to query
-    float totalAmount = 0.0;    // Total resources to be spent in near future
+    float totalAmount = 0.0; // Total resources to be spent in near future
     if (kbGetAge() == cAge2)
     {
         upID = gRushUPID;
@@ -2335,7 +2336,7 @@ int initUnitPicker(string name="BUG", int numberTypes=1, int minUnits=10,
         break;
     }
     }
-    kbUnitPickSetPreferenceFactor(upID, cUnitTypeDryad, 0.0);  // This should *only* be produced through the hesperides rule
+    kbUnitPickSetPreferenceFactor(upID, cUnitTypeDryad, 0.0); // This should *only* be produced through the hesperides rule
     //Done.
     return(upID);
 }
@@ -2364,17 +2365,17 @@ void init(void)
         cvOffenseDefenseSlider = 1.0;
     if (cvOffenseDefenseSlider < -1.0)
         cvOffenseDefenseSlider = -1.0;
-    if (ShowAiEcho == true) aiEcho("Sliders are...RushBoom "+cvRushBoomSlider+", MilitaryEcon "+cvMilitaryEconSlider+", OffenseDefense "+cvOffenseDefenseSlider);
+    echo("Sliders are...RushBoom "+cvRushBoomSlider+", MilitaryEcon "+cvMilitaryEconSlider+", OffenseDefense "+cvOffenseDefenseSlider);
 
 
 
     //Startup messages.
-    if (ShowAiEcho == true) aiEcho("Greetings, my name is "+cMyName+".");
-    if (ShowAiEcho == true) aiEcho("AI Filename='"+cFilename+"'.");
-    if (ShowAiEcho == true) aiEcho("MapName="+cvRandomMapName+".");
-    if (ShowAiEcho == true) aiEcho("Civ="+kbGetCivName(cMyCiv)+".");
-    if (ShowAiEcho == true) aiEcho("DifficultyLevel="+aiGetWorldDifficultyName(aiGetWorldDifficulty())+".");
-    if (ShowAiEcho == true) aiEcho("Personality="+aiGetPersonality()+".");
+    echo("Greetings, my name is "+cMyName+".");
+    echo("AI Filename='"+cFilename+"'.");
+    echo("MapName="+cvRandomMapName+".");
+    echo("Civ="+kbGetCivName(cMyCiv)+".");
+    echo("DifficultyLevel="+aiGetWorldDifficultyName(aiGetWorldDifficulty())+".");
+    echo("Personality="+aiGetPersonality()+".");
 
     //Find someone to hate.
     if (cvPlayerToAttack < 1)
@@ -2494,7 +2495,7 @@ void init(void)
     kbTechTreeAddMinorGodPref(gAge2MinorGod);
     kbTechTreeAddMinorGodPref(gAge3MinorGod);
     kbTechTreeAddMinorGodPref(gAge4MinorGod);
-    if (ShowAIDebug == true) aiEcho("Minor god plan is "+kbGetTechName(gAge2MinorGod)+", "+kbGetTechName(gAge3MinorGod)+", "+kbGetTechName(gAge4MinorGod));
+    echo("Minor god plan is "+kbGetTechName(gAge2MinorGod)+", "+kbGetTechName(gAge3MinorGod)+", "+kbGetTechName(gAge4MinorGod));
 
     //Set the Explore Danger Threshold.
     aiSetExploreDangerThreshold(300.0);
@@ -2597,7 +2598,7 @@ void init(void)
         rushCount = 0;
 
     if ((cvRandomMapName == "king of the hill") && (rushCount < 2))
-        rushCount = 1;               // Always rush in KotH, even on easy.
+        rushCount = 1; // Always rush in KotH, even on easy.
 
     if ((aiGetWorldDifficulty() > cDifficultyModerate) && (rushCount < 2))
         rushCount = 2;
@@ -3847,7 +3848,7 @@ inactive
 //==============================================================================
 void main(void)
 {
-    if (ShowAIDebug == true) aiEcho("AI start at time "+xsGetTime());
+    echo("AI start at time "+xsGetTime());
 
     //Set our random seed.  "-1" is a random init.
     aiRandSetSeed(-1);
@@ -3866,7 +3867,7 @@ rule initAfterDelay            // init ai setup after this number of seconds, us
 inactive
         minInterval 1
 {
-    if (ShowAIDebug == true) aiEcho("initAfterDelay at time " + xsGetTime());
+    echo("initAfterDelay at time " + xsGetTime());
     initInfinitePopModeCheck(); // can use infinitePopMode variable after this
     init();
     xsDisableSelf();

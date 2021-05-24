@@ -112,17 +112,17 @@ inactive
                         if (foodSupply < 250)
                         {
                             MessageRel(cPlayerRelationAlly, RequestFood);
-                            if (ShowAIComms == true) aiEcho("Low on Food and under attack.. Requesting Food!");
+                            echo("AI Comms: Low on Food and under attack.. Requesting Food!");
                         }
                         if (woodSupply < 200)
                         {
                             MessageRel(cPlayerRelationAlly, RequestWood);
-                            if (ShowAIComms == true) aiEcho("Low on Wood and under attack.. Requesting Wood!");
+                            echo("AI Comms: Low on Wood and under attack.. Requesting Wood!");
                         }
                         if (goldSupply < 250)
                         {
                             MessageRel(cPlayerRelationAlly, RequestGold);
-                            if (ShowAIComms == true) aiEcho("Low on Gold and under attack.. Requesting Gold!");
+                            echo("AI Comms: Low on Gold and under attack.. Requesting Gold!");
                         }
                         ResourceTimer = xsGetTime();
                     }
@@ -135,7 +135,7 @@ inactive
                         {
                             HelpTimer = xsGetTime();
                             MessageRel(cPlayerRelationAlly, INeedHelp, TCID);
-                            if (ShowAIComms == true) aiEcho("Requesting Help at TC ID: "+TCID);
+                            echo("AI Comms: Requesting Help at TC ID: "+TCID);
                             vector TowerLocation=kbBaseGetLastKnownDamageLocation(cMyID, defPlanBaseID);
                             if ((equal(TowerLocation, cInvalidVector) == false) && (defPlanBaseID == mainBaseID))
                                 MessageRel(cPlayerRelationAlly, RequestTower, VectorData, TowerLocation);
@@ -489,8 +489,8 @@ inactive
             {
                 static int countA = 0;
                 float distanceA = 30.0;
-                if (ShowAiEcho == true) aiEcho("gEnemySettlementAttPlanID:  "+attackPlanID+"");
-                if (ShowAiEcho == true) aiEcho("NumInPlan:  "+numMilUnitsInPlan+"");
+                echo("gEnemySettlementAttPlanID:  "+attackPlanID+"");
+                echo("NumInPlan:  "+numMilUnitsInPlan+"");
                 if (killSettlementAttPlanCount != -1)
                 {
                     if (planState < cPlanStateAttack)
@@ -551,7 +551,7 @@ inactive
                         //aiPlanDestroy(attackPlanID);
                         gEnemySettlementAttPlanTargetUnitID = -1;
                         aiPlanSetVariableInt(gEnemySettlementAttPlanID, cAttackPlanSpecificTargetID, 0, -1);
-                        if (ShowAiEcho == true) aiEcho ("destroying gEnemySettlementAttPlanID as the target has been destroyed");
+                        echo ("destroying gEnemySettlementAttPlanID as the target has been destroyed");
                         countA = 0;
                         continue;
                     }
@@ -584,7 +584,7 @@ inactive
                         if ((numEnemyMilUnitsNearMBInR70 > 14) || (numEnemyMilUnitsNearDefBInR40 > 14) && (attPlanPriority <= 20))
                         {
                             aiPlanDestroy(attackPlanID);
-                            if (ShowAiEcho == true) aiEcho ("destroying gEnemySettlementAttPlanID as there are too many enemies");
+                            echo ("destroying gEnemySettlementAttPlanID as there are too many enemies");
                             continue;
                         }
                         else
@@ -736,8 +736,8 @@ inactive
             {
                 static int countD = 0;
                 float distanceD = 25.0;
-                if (ShowAiEcho == true) aiEcho("gLandAttackPlanID:  "+attackPlanID+"");
-                if (ShowAiEcho == true) aiEcho("NumInPlan:  "+numMilUnitsInPlan+"");
+                echo("gLandAttackPlanID:  "+attackPlanID+"");
+                echo("NumInPlan:  "+numMilUnitsInPlan+"");
                 if (killLandAttPlanCount != -1)
                 {
                     if (planState < cPlanStateAttack)
@@ -752,7 +752,7 @@ inactive
                         {
                             aiPlanDestroy(attackPlanID);
                             killLandAttPlanCount = -1;
-                            if (ShowAiEcho == true) aiEcho("Killing gLandAttackPlanID, Count >=4");
+                            echo("Killing gLandAttackPlanID, Count >=4");
                             continue;
                         }
                         killLandAttPlanCount = killLandAttPlanCount + 1;
@@ -795,7 +795,7 @@ inactive
                             if (((numEnemyMilUnitsNearMBInR70 > 20) || (numEnemyMilUnitsNearDefBInR40 > 20)) && (attPlanPriority < 20))
                             {
                                 aiPlanDestroy(attackPlanID);
-                                if (ShowAiEcho == true) aiEcho ("destroying gLandAttackPlanID as there are too many enemies 1");
+                                echo ("destroying gLandAttackPlanID as there are too many enemies 1");
                                 continue;
                             }
                             else
@@ -1535,7 +1535,7 @@ inactive
                     if (numTitansInAttackPlan > 0)
                     {
                         aiPlanSetNoMoreUnits(attackPlanID, false); // Make sure the gEnemySettlementAttPlan stays open
-                        if (ShowAiEcho == true) aiEcho ("Setting gEnemySettlementAttPlanID NoMoreUnits to false");
+                        echo ("Setting gEnemySettlementAttPlanID NoMoreUnits to false");
                         aiPlanAddUnitType(attackPlanID, cUnitTypeLogicalTypeLandMilitary, numUnitsInPlan+numMilUnitsInDefPlans, numUnitsInPlan+numMilUnitsInDefPlans, numUnitsInPlan+numMilUnitsInDefPlans);
                         xsSetRuleMinIntervalSelf(12);
                     }
@@ -1544,7 +1544,7 @@ inactive
                     {
                         aiPlanSetNoMoreUnits(attackPlanID, false); // Make sure the gEnemySettlementAttPlan stays open
                         aiPlanSetDesiredPriority(attackPlanID, 55);
-                        if (ShowAiEcho == true) aiEcho ("Setting gEnemySettlementAttPlanID NoMoreUnits to false");
+                        echo ("Setting gEnemySettlementAttPlanID NoMoreUnits to false");
                         aiPlanAddUnitType(attackPlanID, cUnitTypeLogicalTypeLandMilitary, numUnitsInPlan+numMilUnitsInDefPlans, numUnitsInPlan+numMilUnitsInDefPlans, numUnitsInPlan+numMilUnitsInDefPlans);
                         xsSetRuleMinIntervalSelf(12);
                     }
@@ -1552,7 +1552,7 @@ inactive
                     {
                         aiPlanSetNoMoreUnits(attackPlanID, true); // Make sure the gEnemySettlementAttPlan is closed
                         aiPlanSetDesiredPriority(attackPlanID, 52);
-                        if (ShowAiEcho == true) aiEcho ("Setting gEnemySettlementAttPlanID NoMoreUnits to true");
+                        echo ("Setting gEnemySettlementAttPlanID NoMoreUnits to true");
                     }
                 }
                 else if (((planState == cPlanStateGather) || (planState == cPlanStateExplore) || (planState == cPlanStateNone))
@@ -1563,7 +1563,7 @@ inactive
                     {
                         aiPlanDestroy(attackPlanID);
                         gEnemySettlementAttPlanTargetUnitID = -1;
-                        if (ShowAiEcho == true) aiEcho ("destroying gEnemySettlementAttPlanID as it has been active for more than 5 Minutes");
+                        echo ("destroying gEnemySettlementAttPlanID as it has been active for more than 5 Minutes");
                     }
                     continue;
                 }
@@ -2182,7 +2182,7 @@ inactive
                     || (gTransportMap == true) && (aiPlanGetState(attackPlanID) == cPlanStateGather) && (xsGetTime() > attackPlanStartTime + 2*60*1000))
                 {
                     aiPlanDestroy(attackPlanID);
-                    if (ShowAiEcho == true) aiEcho("destroying gLandAttackPlanID as it has been active for more than 4 Minutes");
+                    echo("destroying gLandAttackPlanID as it has been active for more than 4 Minutes");
                     continue;
                 }
                 return;

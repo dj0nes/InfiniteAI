@@ -10,20 +10,7 @@
 
 
 //==============================================================================
-//PART 1 Int & Handler
-//Below, you'll find the external calls and Plan handlers.
-//you don't really want to touch this.. and if you do, you'll break stuff.
-//==============================================================================
-
-//////////////// aiEchoDEBUG ////////////////
-extern bool ShowAiEcho = false; // All aiEcho, see specific below to override.
-extern bool ShowAIComms = false;
-extern bool ShowAIDebugEchoes = false;
-
-//////////////// END OF aiEchoDEBUG ///////////
-
-//==============================================================================
-//PART 2 Bools & Stuff you can change!
+//PART 1 Bools & Stuff you can change!
 //Below, you'll find a few things I've set up,
 //you can turn these on/off as you please, by setting the final value to "true" (on) or "false" (off).
 //There's also a small description on all of them, to make it a little easier to understand what happens when you set it to true.
@@ -44,7 +31,7 @@ extern int mGoldBeforeTrade = 6500;       //Excess gold to other resources, (All
 // End of STINNERV
 
 //==============================================================================
-//PART 3 Overrides & Rules
+//PART 2 Overrides & Rules
 //From here and below, you'll find my custom rules,
 //as well with some ''Handlers/Overrides'' if we could call it that.
 //==============================================================================
@@ -112,7 +99,7 @@ void Comms(int PlayerID = -1)
         int iPromptType = aiCommsGetRecordPromptType(PlayerID);
         int iUserData = aiCommsGetRecordData(PlayerID);
         vector iPos = aiCommsGetRecordPosition(PlayerID);
-        if (ShowAIDebugEchoes == true) aiEcho("Message received: From Player: "+iSenderID+", prompt "+iPromptType+", data "+iUserData+", vector "+iPos+".");
+        echo("AI Comms: Message received: From Player: "+iSenderID+", prompt "+iPromptType+", data "+iUserData+", vector "+iPos+".");
 
         if ((iPromptType == Tellothers) || (iPromptType == admiralTellothers))
         {
@@ -124,7 +111,7 @@ void Comms(int PlayerID = -1)
                 PlayerType = "AdmiralAI";
 
             aiPlanSetUserVariableInt(gSomeData, PlayersData+iSenderID, 0, 1);
-            aiEcho("Player "+iSenderID+" is an allied "+PlayerType+" player, communication is possible! :)");
+            aiEcho("AI Comms: Player "+iSenderID+" is an allied "+PlayerType+" player, communication is possible! :)");
         }
 
         else if (iPromptType == AttackTarget)
@@ -141,7 +128,7 @@ void Comms(int PlayerID = -1)
                 return;
             aEnemyTCID = iUserData;
             aLastTCIDTime = xsGetTime();
-            if (ShowAIComms == true) aiEcho("Player "+iSenderID+" is asking us to assist on tcid: "+iUserData);
+            echo("AI Comms: Player "+iSenderID+" is asking us to assist on tcid: "+iUserData);
             if (aiPlanGetState(gEnemySettlementAttPlanID) != -1)
             {
                 int Owner = kbUnitGetOwner(aEnemyTCID);
@@ -160,7 +147,7 @@ void Comms(int PlayerID = -1)
             HelpSettleID = iUserData;
             xsSetRuleMinInterval("defendAlliedBase", 0);
             xsEnableRule("defendAlliedBase");
-            if (ShowAIComms == true) aiEcho("Player "+iSenderID+" is asking for help at TC id "+iUserData);
+            echo("AI Comms: Player "+iSenderID+" is asking for help at TC id "+iUserData);
         }
 
         else if (iPromptType == RequestTower)
@@ -204,7 +191,7 @@ void Comms(int PlayerID = -1)
                         aiPlanAddUnitType(TowerPlan, cBuilderType, 1, 1, 1);
                     else aiPlanAddUnitType(TowerPlan, cBuilderType, 1, 2, 2);
                     aiPlanSetActive(TowerPlan);
-                    if (ShowAIComms == true) aiEcho("Player "+iSenderID+" is requesting a tower over at the following location: "+iPos);
+                    echo("AI Comms: Player "+iSenderID+" is requesting a tower over at the following location: "+iPos);
                 }
                 if ((ActiveBPlan != -1) && (numGatherers <= allowconstructors))
                     aiPlanDestroy(TowerPlan);
@@ -233,7 +220,7 @@ void Comms(int PlayerID = -1)
                         AmountToSend = 1200;
                     aiTribute(iSenderID, cResourceFood, AmountToSend);
                     gLastSentTime = xsGetTime();
-                    if (ShowAIComms == true) aiEcho("Donated "+AmountToSend+" Food to player "+iSenderID);
+                    echo("AI Comms: Donated "+AmountToSend+" Food to player "+iSenderID);
                     updateGlutRatio();
                 }
                 break;
@@ -247,7 +234,7 @@ void Comms(int PlayerID = -1)
                         AmountToSend = 1200;
                     aiTribute(iSenderID, cResourceWood, AmountToSend);
                     gLastSentTime = xsGetTime();
-                    if (ShowAIComms == true) aiEcho("Donated "+AmountToSend+" Wood to player "+iSenderID);
+                    echo("AI Comms: Donated "+AmountToSend+" Wood to player "+iSenderID);
                     updateGlutRatio();
                 }
                 break;
@@ -261,7 +248,7 @@ void Comms(int PlayerID = -1)
                         AmountToSend = 1200;
                     aiTribute(iSenderID, cResourceGold, AmountToSend);
                     gLastSentTime = xsGetTime();
-                    if (ShowAIComms == true) aiEcho("Donated "+AmountToSend+" Gold to player "+iSenderID);
+                    echo("AI Comms: Donated "+AmountToSend+" Gold to player "+iSenderID);
                     updateGlutRatio();
                 }
                 break;
@@ -300,8 +287,6 @@ void Comms(int PlayerID = -1)
 void initRethlAge1(void)  // Am I doing this right??
 {
     aiSetWonderDeathEventHandler("wonderDeathHandler");
-    if (ShowAIDebugEchoes == true)
-        ShowAIDebug = true;
     aiCommsSetEventHandler("Comms");
     kbLookAtAllUnitsOnMap(); // this is cheating, but it is super crucial for map detection and consistency and should have little effect on the game as it goes on.
     gSomeData = aiPlanCreate("Game Data", cPlanData);
@@ -970,17 +955,17 @@ Group Donations
         if (FoodTooLow == true)
         {
             MessageRel(cPlayerRelationAlly, RequestFood, cEmergency);
-            if (ShowAIComms == true) aiEcho("This is looking bad, requesting extra Food!");
+            echo("AI Comms: This is looking bad, requesting extra Food!");
         }
         if (GoldTooLow == true)
         {
             MessageRel(cPlayerRelationAlly, RequestGold, cEmergency);
-            if (ShowAIComms == true) aiEcho("This is looking bad, requesting extra Gold!");
+            echo("AI Comms: This is looking bad, requesting extra Gold!");
         }
         if (WoodTooLow == true)
         {
             MessageRel(cPlayerRelationAlly, RequestWood, cEmergency);
-            if (ShowAIComms == true) aiEcho("This is looking bad, requesting extra Wood!");
+            echo("AI Comms: This is looking bad, requesting extra Wood!");
         }
         if ((FoodTooLow == true) || (GoldTooLow == true) || (WoodTooLow == true))
         {
@@ -1001,12 +986,12 @@ Group Donations
         if (kbResourceGet(cResourceFood) < Food)
         {
             MessageRel(cPlayerRelationAlly, RequestFood);
-            if (ShowAIComms == true) aiEcho("Requesting Food for age up!");
+            echo("AI Comms: Requesting Food for age up!");
         }
         if (kbResourceGet(cResourceGold) < Gold)
         {
             MessageRel(cPlayerRelationAlly, RequestGold);
-            if (ShowAIComms == true) aiEcho("Requesting Gold for age up!");
+            echo("AI Comms: Requesting Gold for age up!");
         }
         xsSetRuleMinIntervalSelf(25);
         return;
