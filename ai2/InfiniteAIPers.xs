@@ -7,12 +7,16 @@
 // set personality of InfiniteAI.
 //==============================================================================
 
+extern string PersonalityProtector = "InfiniteAI Protector";
+extern string PersonalityDefender = "InfiniteAI Defender";
+extern string PersonalityBuilder = "InfiniteAI Builder";
+extern string PersonalityBalanced = "InfiniteAI Balanced";
+extern string PersonalityConqueror = "InfiniteAI Conqueror";
+extern string PersonalityAttacker = "InfiniteAI Attacker";
 
 //==============================================================================
 void persDecidePersonality(void)
 {
-    if (ShowAiEcho == true) aiEcho("persDecidePersonality:");
-
     // This AI randomly chooses from one of the six other personalities, and sets the
     // variables accordingly.
     int choice = Personality;
@@ -37,6 +41,7 @@ void persDecidePersonality(void)
         cvMilitaryEconSlider = 0.3;
         cvOffenseDefenseSlider = -0.9;
         cvSliderNoise = 0.1;
+        aiSetPersonality(PersonalityProtector);
         break;
     }
     case 1:  // Defensive Rusher (defender)
@@ -46,6 +51,7 @@ void persDecidePersonality(void)
         cvMilitaryEconSlider = 0.9;
         cvOffenseDefenseSlider = -0.9;
         cvSliderNoise = 0.2;
+        aiSetPersonality(PersonalityDefender);
         break;
     }
     case 2:  // Economic Boomer (builder)
@@ -55,12 +61,14 @@ void persDecidePersonality(void)
         cvMilitaryEconSlider = -0.9;
         cvOffenseDefenseSlider = 0.0;
         cvSliderNoise = 0.2;
+        aiSetPersonality(PersonalityBuilder);
         break;
     }
     case 3:  // Balanced
     {
         aiEcho("Choosing personality:  Balanced (Standard)");
         cvSliderNoise = 0.2;
+        aiSetPersonality(PersonalityBalanced);
         break;
     }
     case 4:  // Aggressive Boomer (conqueror)
@@ -70,6 +78,7 @@ void persDecidePersonality(void)
         cvMilitaryEconSlider = 0.3;
         cvOffenseDefenseSlider = 0.9;
         cvSliderNoise = 0.2;
+        aiSetPersonality(PersonalityConqueror);
         break;
     }
     case 5:  // Aggressive Rusher (attacker)
@@ -79,10 +88,11 @@ void persDecidePersonality(void)
         cvMilitaryEconSlider = 0.9;
         cvOffenseDefenseSlider = 0.9;
         cvSliderNoise = 0.2;
+        aiSetPersonality(PersonalityAttacker);
         break;
     }
     }
 
-    if (ShowAiEcho == true) aiEcho("RushBoom "+cvRushBoomSlider+", MilitaryEcon "+cvMilitaryEconSlider+", OffenseDefense "+cvOffenseDefenseSlider);
+    echo("RushBoom "+cvRushBoomSlider+", MilitaryEcon "+cvMilitaryEconSlider+", OffenseDefense "+cvOffenseDefenseSlider);
 
 }
