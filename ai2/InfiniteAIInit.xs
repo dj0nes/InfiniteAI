@@ -8,6 +8,9 @@ void initGreek(void)
     gAirScout=cUnitTypePegasus;
     gWaterScout=cUnitTypeFishingShipGreek;
 
+    xsEnableRule("maintainAirScouts"); // enable the airScout rules
+    xsEnableRule("fixJammedDropsiteBuildPlans");
+    xsEnableRule("relicUnitHandler");
     //Greeks gather with heroes.
     gGatherRelicType=cUnitTypeHero;
 
@@ -45,6 +48,9 @@ void initGreek(void)
 //==============================================================================
 void initEgyptian(void)
 {
+    xsEnableRule("fixJammedDropsiteBuildPlans");
+    xsEnableRule("trainMercs");
+
     //Create a simple TC empower plan
     gEmpowerPlanID=aiPlanCreate("Pharaoh Empower", cPlanEmpower);
     if (gEmpowerPlanID >= 0)
@@ -106,6 +112,12 @@ void initEgyptian(void)
 //==============================================================================
 void initNorse(void)
 {
+    // enable raven scouts on odin
+    if (cMyCiv == cCivOdin)
+    {
+        xsEnableRule("airScout1");
+        xsEnableRule("airScout2");
+    }
 
     //Set our trained dropsite PUID.
     aiSetTrainedDropsiteUnitTypeID(cUnitTypeOxCart);
@@ -177,7 +189,8 @@ void initNorse(void)
 //==============================================================================
 void initAtlantean(void)
 {
-    // Atlantean
+    xsEnableRule("makeAtlanteanHeroes");
+
     gLandScout=cUnitTypeOracleScout;
     gWaterScout=cUnitTypeFishingShipAtlantean;
     gAirScout=-1;
@@ -246,7 +259,7 @@ void initAtlantean(void)
 //==============================================================================
 void initChinese(void)
 {
-    // Chinese
+    xsEnableRule("fixJammedDropsiteBuildPlans");
 
     gLandScout=cUnitTypeScoutChinese;
     gWaterScout=cUnitTypeFishingShipChinese;
@@ -304,75 +317,12 @@ void initChinese(void)
 }
 
 
-void init(void)
+void initBases(void)
 {
-    xsEnableRule("updateBreakdowns");
-    xsEnableRule("updateFoodBreakdown");
-    //We're in a random map.
-    aiSetRandomMap(true);
-
-    //Adjust control variable sliders by random amount
-    cvRushBoomSlider = (cvRushBoomSlider - cvSliderNoise) + (cvSliderNoise * (aiRandInt(201))/100.0);
-    if (cvRushBoomSlider > 1.0)
-        cvRushBoomSlider = 1.0;
-    if (cvRushBoomSlider < -1.0)
-        cvRushBoomSlider = -1.0;
-    cvMilitaryEconSlider = (cvMilitaryEconSlider - cvSliderNoise) + (cvSliderNoise * (aiRandInt(201))/100.0);
-    if (cvMilitaryEconSlider > 1.0)
-        cvMilitaryEconSlider = 1.0;
-    if (cvMilitaryEconSlider < -1.0)
-        cvMilitaryEconSlider = -1.0;
-    cvOffenseDefenseSlider = (cvOffenseDefenseSlider - cvSliderNoise) + (cvSliderNoise * (aiRandInt(201))/100.0);
-    if (cvOffenseDefenseSlider > 1.0)
-        cvOffenseDefenseSlider = 1.0;
-    if (cvOffenseDefenseSlider < -1.0)
-        cvOffenseDefenseSlider = -1.0;
-
-    //Startup messages
-    echo("Sliders are...RushBoom "+cvRushBoomSlider+", MilitaryEcon "+cvMilitaryEconSlider+", OffenseDefense "+cvOffenseDefenseSlider);
-    echo("Greetings, my name is "+cMyName+".");
-    echo("AI Filename='"+cFilename+"'.");
-    echo("MapName="+cvRandomMapName+".");
-    echo("Civ="+kbGetCivName(cMyCiv)+".");
-    echo("DifficultyLevel="+aiGetWorldDifficultyName(aiGetWorldDifficulty())+".");
-    echo("Personality="+aiGetPersonality()+".");
-
-    //Find someone to hate.
-    if (cvPlayerToAttack < 1)
-        updatePlayerToAttack();
-    else
-        aiSetMostHatedPlayerID(cvPlayerToAttack);
-
-
-    //Bind our age handlers.
-    aiSetAgeEventHandler(cAge2, "age2Handler");
-    aiSetAgeEventHandler(cAge3, "age3Handler");
-    aiSetAgeEventHandler(cAge4, "age4Handler");
-    aiSetAgeEventHandler(cAge5, "age5Handler");
-
-    if (cvMaxAge <= kbGetAge()) // Are we starting at or beyond our max age?
-    {
-        aiSetPauseAllAgeUpgrades(true);
-    }
-    //My stuff
-    initRethlAge1();
-
-    //Setup god power handler
-    aiSetGodPowerEventHandler("gpHandler");
-
-    //Setup the resign handler
-    aiSetResignEventHandler("resignHandler");
-
     //Set our town location.
     int TC = findUnit(cUnitTypeAbstractSettlement);
     if (TC != -1)
         kbSetTownLocation(kbUnitGetPosition(TC));
-
-    //Economy.
-    initEcon();
-
-    //God Powers
-    initGodPowers();
 
     //Create bases for all of our settlements.  Ignore any that already have
     //bases set.  If we have an invalid main base, the first base we create
@@ -417,8 +367,10 @@ void init(void)
             }
         }
     }
+}
 
-
+void initCultureSpecifics(void)
+{
     //Culture setup.
     switch (cMyCulture)
     {
@@ -448,20 +400,40 @@ void init(void)
         break;
     }
     }
-    //Map Specific
-    initMapSpecific();
+}
 
-    //Setup the progression to follow these minor gods.
-    kbTechTreeAddMinorGodPref(gAge2MinorGod);
-    kbTechTreeAddMinorGodPref(gAge3MinorGod);
-    kbTechTreeAddMinorGodPref(gAge4MinorGod);
-    echo("Minor god plan is "+kbGetTechName(gAge2MinorGod)+", "+kbGetTechName(gAge3MinorGod)+", "+kbGetTechName(gAge4MinorGod));
+void initPersonality(void)
+{
+    //Adjust control variable sliders by random amount
+    cvRushBoomSlider = (cvRushBoomSlider - cvSliderNoise) + (cvSliderNoise * (aiRandInt(201))/100.0);
+    if (cvRushBoomSlider > 1.0)
+        cvRushBoomSlider = 1.0;
+    if (cvRushBoomSlider < -1.0)
+        cvRushBoomSlider = -1.0;
+    cvMilitaryEconSlider = (cvMilitaryEconSlider - cvSliderNoise) + (cvSliderNoise * (aiRandInt(201))/100.0);
+    if (cvMilitaryEconSlider > 1.0)
+        cvMilitaryEconSlider = 1.0;
+    if (cvMilitaryEconSlider < -1.0)
+        cvMilitaryEconSlider = -1.0;
+    cvOffenseDefenseSlider = (cvOffenseDefenseSlider - cvSliderNoise) + (cvSliderNoise * (aiRandInt(201))/100.0);
+    if (cvOffenseDefenseSlider > 1.0)
+        cvOffenseDefenseSlider = 1.0;
+    if (cvOffenseDefenseSlider < -1.0)
+        cvOffenseDefenseSlider = -1.0;
 
-    //Set the Explore Danger Threshold.
-    aiSetExploreDangerThreshold(300.0);
-    //Auto gather our military units.
-    aiSetAutoGatherMilitaryUnits(false);
+    //Startup messages
+    echo("Sliders are...RushBoom "+cvRushBoomSlider+", MilitaryEcon "+cvMilitaryEconSlider+", OffenseDefense "+cvOffenseDefenseSlider);
+    echo("Greetings, my name is "+cMyName+".");
+    echo("AI Filename='"+cFilename+"'.");
+    echo("MapName="+cvRandomMapName+".");
+    echo("Civ="+kbGetCivName(cMyCiv)+".");
+    echo("DifficultyLevel="+aiGetWorldDifficultyName(aiGetWorldDifficulty())+".");
+    echo("Personality="+aiGetPersonality()+".");
+}
 
+
+void initHousingLimits(void)
+{
     //Get our house build limit.
     if (cMyCulture == cCultureAtlantean)
         gHouseBuildLimit = kbGetBuildLimit(cMyID, cUnitTypeManor);
@@ -477,7 +449,11 @@ void init(void)
         gHouseAvailablePopRebuild=8;
     else
         gHouseAvailablePopRebuild=5;
+}
 
+
+void initHardPopulationLimits(void)
+{
     //Set the hard pop caps.
     if (aiGetGameMode() == cGameModeLightning)
     {
@@ -497,10 +473,10 @@ void init(void)
         else
             gHardEconomyPopCap=-1;
     }
+}
 
-    //Set the default attack response distance.
-    aiSetAttackResponseDistance(60.0);
-
+void initWallBehavior(void)
+{
     // always wall up, unless the map strictly said no.
 
     if (bWallUp == true)
@@ -528,10 +504,11 @@ void init(void)
         gBuildWalls = false;
         gBuildWallsAtMainBase = false;
     }
+}
 
-    //set our default stance to defensive.
-    aiSetDefaultStance(cUnitStanceDefensive);
 
+void initRushBehavior(void)
+{
     //Decide whether or not we're doing a rush/raid.
     // Rushers will use a smaller econ to age up faster, send more waves and larger waves.
     // Boomers will use a larger econ, hit age 2 later, make smaller armies, and send zero or few waves, hitting age 3 much sooner.
@@ -663,8 +640,11 @@ void init(void)
             }
         }
     }
+}
 
 
+void initLateAgeAttack(void)
+{
     //Create our late age attack goal.
     if (aiGetWorldDifficulty() == cDifficultyEasy)
         gLateUPID=initUnitPicker("Late", 1, -1, -1, 8, 16, gNumberBuildings - 1);
@@ -709,7 +689,11 @@ void init(void)
             aiPlanSetVariableInt(gLandAttackGoalID, cGoalPlanUpgradeFilterType, 0, cUpgradeTypeHitpoints);
         }
     }
+}
 
+
+void initGatherGoals(void)
+{
     //Create our econ goal (which is really just to store stuff together).
     gGatherGoalPlanID=aiPlanCreate("GatherGoals", cPlanGatherGoal);
     if (gGatherGoalPlanID >= 0)
@@ -759,7 +743,11 @@ void init(void)
         //Lastly, update our EM.
         updateEMAllAges();
     }
+}
 
+
+void initLightningOrDeathmatchMode(void)
+{
     if ((aiGetGameMode() == cGameModeDeathmatch) || (aiGetGameMode() == cGameModeLightning)) // Add an emergency temple, and 10 houses)
     {
         if (cMyCulture == cCultureAtlantean)
@@ -775,88 +763,101 @@ void init(void)
                 createSimpleBuildPlan(cUnitTypeHouse, 4, 95, false, true, cEconomyEscrowID, kbBaseGetMainID(cMyID), 1);
         }
     }
+}
+
+
+void init(void)
+{
+    xsEnableRule("updateBreakdowns");
+    xsEnableRule("updateFoodBreakdown");
+
+    aiSetRandomMap(true); //We're in a random map.
+
+    initPersonality();
+
+    //Find someone to hate.
+    if (cvPlayerToAttack < 1)
+        updatePlayerToAttack();
+    else
+        aiSetMostHatedPlayerID(cvPlayerToAttack);
+
+
+    //Bind our age handlers.
+    aiSetAgeEventHandler(cAge2, "age2Handler");
+    aiSetAgeEventHandler(cAge3, "age3Handler");
+    aiSetAgeEventHandler(cAge4, "age4Handler");
+    aiSetAgeEventHandler(cAge5, "age5Handler");
+
+    if (cvMaxAge <= kbGetAge()) // Are we starting at or beyond our max age?
+        aiSetPauseAllAgeUpgrades(true);
+
+    //My stuff
+    initRethlAge1();
+
+    aiSetGodPowerEventHandler("gpHandler");
+    aiSetResignEventHandler("resignHandler");
+
+    initEcon();
+    initGodPowers();
+    initBases();
+
+    initCultureSpecifics();
+
+    //Map Specific
+    initMapSpecific();
+
+    //Setup the progression to follow these minor gods.
+    kbTechTreeAddMinorGodPref(gAge2MinorGod);
+    kbTechTreeAddMinorGodPref(gAge3MinorGod);
+    kbTechTreeAddMinorGodPref(gAge4MinorGod);
+    echo("Minor god plan is "+kbGetTechName(gAge2MinorGod)+", "+kbGetTechName(gAge3MinorGod)+", "+kbGetTechName(gAge4MinorGod));
+
+    //Set the Explore Danger Threshold.
+    aiSetExploreDangerThreshold(300.0);
+    //Auto gather our military units.
+    aiSetAutoGatherMilitaryUnits(false);
+
+    initHousingLimits();
+
+    initHardPopulationLimits();
+
+    aiSetAttackResponseDistance(60.0); // Set the default attack response distance.
+
+    initWallBehavior();
+
+    aiSetDefaultStance(cUnitStanceDefensive); // set our default stance to defensive
+
+    initRushBehavior();
+
+    initLateAgeAttack();
+
+    initGatherGoals();
+
+    initLightningOrDeathmatchMode();
+
     xsEnableRule("buildInitialTemple");
     xsEnableRule("buildResearchGranary");
-
-    // research husbandry
     xsEnableRule("getHusbandry");
-
-    // research hunting dogs
     xsEnableRule("getHuntingDogs");
-
-    // age1 econ upgrades
     xsEnableRuleGroup("age1EconUpgrades");
-
-    //enable the airScout rules if necessary
-    if ((cMyCulture == cCultureGreek) || (cMyCiv == cCivOdin))
-    {
-        if (cMyCulture == cCultureGreek)
-        {
-            xsEnableRule("maintainAirScouts");
-        }
-        xsEnableRule("airScout1");
-        xsEnableRule("airScout2");
-    }
-
-    //enable the fixJammedDropsiteBuildPlans rule
-    if ((cMyCulture == cCultureGreek) || (cMyCulture == cCultureEgyptian) || (cMyCulture == cCultureChinese))
-        xsEnableRule("fixJammedDropsiteBuildPlans");
 
     //enable the tacticalBuildings rule
     xsEnableRule("tacticalBuildings");
 
-    if (cMyCulture == cCultureAtlantean)
-    {
-        //enable our makeAtlanteanHeroes rule
-        xsEnableRule("makeAtlanteanHeroes");
-    }
-
-    if (cMyCulture == cCultureEgyptian)
-        xsEnableRule("trainMercs");
-
-
-    if (cMyCulture != cCultureGreek)
-    {
-        //enable the relicUnitHandler rule
-        xsEnableRule("relicUnitHandler");
-    }
-
-    //enable the startLandScouting rule
     xsEnableRule("startLandScouting");
-
-    //enable the age1Progress rule
     xsEnableRule("age1Progress");
-
-    //enable the buildHouse rule
     xsEnableRule("buildHouse");
-
-    //enable the dockMonitor rule
     xsEnableRule("dockMonitor");
-
-    //enable the spotAgeUpgrades rule
     xsEnableRule("spotAgeUpgrades");
 
-    //Relics:  Always on Hard or Nightmare, 50% of the time on Moderate, Never on Easy.
-    bool gatherRelics = true;
-    if ((aiGetWorldDifficulty() == cDifficultyEasy) || ((aiGetWorldDifficulty() == cDifficultyModerate) && (aiRandInt(2) == 0)))
-        gatherRelics = false;
-    //If we're going to gather relics, do it.
-    if (cvOkToGatherRelics == false)
-        gatherRelics = false;
-    if (gatherRelics == true)
-        xsEnableRule("goAndGatherRelics");
 
-    //Enable building repair.
-    if (aiGetWorldDifficulty() != cDifficultyEasy)
-        xsEnableRule("repairBuildings");
+    xsEnableRule("goAndGatherRelics"); // always gather relics, ignore previous modifier based on difficulty
+
+    xsEnableRule("repairBuildings"); // always repair buildings, sorry easy players
 
     xsEnableRule("defendPlanRule");
     xsEnableRule("mainBaseDefPlan1");
     xsEnableRule("findMySettlementsBeingBuilt");
-
-    //update player to attack
-    xsEnableRule("updatePlayerToAttack");
-
-    //Force an armory to go down
-    xsEnableRule("buildArmory");
+    xsEnableRule("updatePlayerToAttack"); // update player to attack
+    xsEnableRule("buildArmory"); // build an armory at some point
 }
