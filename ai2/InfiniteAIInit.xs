@@ -3,7 +3,7 @@ void initGreek(void)
     //Modify our favor need.  A pseudo-hack.
     aiSetFavorNeedModifier(10.0);
 
-MyFortress = cUnitTypeFortress;
+    MyFortress = cUnitTypeFortress;
 
     //Greek scout types.
     gLandScout=cUnitTypeScout;
@@ -53,7 +53,7 @@ void initEgyptian(void)
     xsEnableRule("fixJammedDropsiteBuildPlans");
     xsEnableRule("trainMercs");
 
-MyFortress = cUnitTypeMigdolStronghold;
+    MyFortress = cUnitTypeMigdolStronghold;
 
     //Create a simple TC empower plan
     gEmpowerPlanID=aiPlanCreate("Pharaoh Empower", cPlanEmpower);
@@ -123,8 +123,8 @@ void initNorse(void)
         xsEnableRule("airScout2");
     }
 
-            MyFortress = cUnitTypeHillFort;
-        cBuilderType = cUnitTypeAbstractInfantry;
+    MyFortress = cUnitTypeHillFort;
+    cBuilderType = cUnitTypeAbstractInfantry;
 
     //Set our trained dropsite PUID.
     aiSetTrainedDropsiteUnitTypeID(cUnitTypeOxCart);
@@ -198,10 +198,10 @@ void initAtlantean(void)
 {
     xsEnableRule("makeAtlanteanHeroes");
 
-            aiSetMinNumberNeedForGatheringAggressvies(3);
-        aiSetMinNumberWantForGatheringAggressives(3);
+    aiSetMinNumberNeedForGatheringAggressvies(3);
+    aiSetMinNumberWantForGatheringAggressives(3);
 
-        MyFortress = cUnitTypePalace;
+    MyFortress = cUnitTypePalace;
 
     gLandScout=cUnitTypeOracleScout;
     gWaterScout=cUnitTypeFishingShipAtlantean;
@@ -273,7 +273,7 @@ void initChinese(void)
 {
     xsEnableRule("fixJammedDropsiteBuildPlans");
 
-        MyFortress = cUnitTypeCastle;
+    MyFortress = cUnitTypeCastle;
 
 
     gLandScout=cUnitTypeScoutChinese;
@@ -829,111 +829,80 @@ void initLightningOrDeathmatchMode(void)
 
 void init(void)
 {
-    xsEnableRule("updateBreakdowns");
-    xsEnableRule("updateFoodBreakdown");
-
-    aiSetRandomMap(true); //We're in a random map.
-
-    initPersonality();
-
-    //Find someone to hate.
+    // First and foremost: find someone to hate
     if (cvPlayerToAttack < 1)
         updatePlayerToAttack();
     else
         aiSetMostHatedPlayerID(cvPlayerToAttack);
 
-
-    //Bind our age handlers.
-    aiSetAgeEventHandler(cAge2, "age2Handler");
-    aiSetAgeEventHandler(cAge3, "age3Handler");
-    aiSetAgeEventHandler(cAge4, "age4Handler");
-    aiSetAgeEventHandler(cAge5, "age5Handler");
-
-    if (cvMaxAge <= kbGetAge()) // Are we starting at or beyond our max age?
-        aiSetPauseAllAgeUpgrades(true);
-
-    //My stuff
-    // initRethlAge1();
-
-    aiSetWonderDeathEventHandler("wonderDeathHandler");
-    aiCommsSetEventHandler("Comms");
-    kbLookAtAllUnitsOnMap(); // this is cheating, but it is super crucial for map detection and consistency and should have little effect on the game as it goes on.
-    
-    // Check with allies and enable donations
-    MessageRel(cPlayerRelationAlly, Tellothers, 1);
-    xsEnableRule("MonitorAllies");
-
-    initGameData();
-
-    if ((aiGetWorldDifficulty() == cDifficultyNightmare) || (aiGetWorldDifficulty() == cDifficultyEasy))
-        gMaxTradeCarts = 15;
-    defWantedCaravans = gMaxTradeCarts;
-
-    aiSetGodPowerEventHandler("gpHandler");
-    aiSetResignEventHandler("resignHandler");
-
-    initEcon();
-    initGodPowers();
-    initBases();
-
-    initCultureSpecifics();
+    // this is cheating, but it is super crucial for map detection and consistency
+    // and should have little effect on the game as it goes on.
+    kbLookAtAllUnitsOnMap();
 
     //Map Handling, eg. fish, farms, vinlandsaga, nomad weirdness
     initMapSpecific();
     initAutoDetectMap();
 
+    initPersonality();
+    initGameData();
+    initEcon();
+    initGodPowers();
+    initBases();
+    initCultureSpecifics();
+    initHousingLimits();
+    initHardPopulationLimits();
+    initWallBehavior();
+    initRushBehavior();
+    initLateAgeAttack();
+    initGatherGoals();
+    initLightningOrDeathmatchMode();
+
+    if ((kbGetTechStatus(cTechSecretsoftheTitans) > cTechStatusUnobtainable) && (kbGetTechStatus(cTechSecretsoftheTitans) < cTechStatusActive))
+        TitanAvailable = true;
+
+    // Check with allies and enable donations
+    MessageRel(cPlayerRelationAlly, Tellothers, 1);
+    xsEnableRule("MonitorAllies");
+
+    // AI handlers
+    aiSetAgeEventHandler(cAge2, "age2Handler");
+    aiSetAgeEventHandler(cAge3, "age3Handler");
+    aiSetAgeEventHandler(cAge4, "age4Handler");
+    aiSetAgeEventHandler(cAge5, "age5Handler");
+    aiSetRandomMap(true); // I don't know why this needs to be true
+    aiCommsSetEventHandler("Comms");
+    aiSetGodPowerEventHandler("gpHandler");
+    aiSetResignEventHandler("resignHandler");
+    aiSetExploreDangerThreshold(300.0);
+    aiSetWonderDeathEventHandler("wonderDeathHandler");
+    aiSetAutoGatherMilitaryUnits(false);
+    aiSetAttackResponseDistance(60.0); // Set the default attack response distance.
+    aiSetDefaultStance(cUnitStanceDefensive); // set our default stance to defensive
+    if (cvMaxAge <= kbGetAge()) // Are we starting at or beyond our max age?
+        aiSetPauseAllAgeUpgrades(true);
+    
     //Setup the progression to follow these minor gods.
     kbTechTreeAddMinorGodPref(gAge2MinorGod);
     kbTechTreeAddMinorGodPref(gAge3MinorGod);
     kbTechTreeAddMinorGodPref(gAge4MinorGod);
     echo("Minor god plan is "+kbGetTechName(gAge2MinorGod)+", "+kbGetTechName(gAge3MinorGod)+", "+kbGetTechName(gAge4MinorGod));
 
-    //Set the Explore Danger Threshold.
-    aiSetExploreDangerThreshold(300.0);
-    //Auto gather our military units.
-    aiSetAutoGatherMilitaryUnits(false);
-
-    initHousingLimits();
-
-    initHardPopulationLimits();
-
-    aiSetAttackResponseDistance(60.0); // Set the default attack response distance.
-
-    initWallBehavior();
-
-    aiSetDefaultStance(cUnitStanceDefensive); // set our default stance to defensive
-
-    initRushBehavior();
-
-    initLateAgeAttack();
-
-    initGatherGoals();
-
-    initLightningOrDeathmatchMode();
-
-    if ((kbGetTechStatus(cTechSecretsoftheTitans) > cTechStatusUnobtainable) && (kbGetTechStatus(cTechSecretsoftheTitans) < cTechStatusActive))
-        TitanAvailable = true;
-
+    // enable rules for first age and general gameplay
+    xsEnableRule("updateBreakdowns");
+    xsEnableRule("updateFoodBreakdown");
     xsEnableRule("buildInitialTemple");
     xsEnableRule("buildResearchGranary");
     xsEnableRule("getHusbandry");
     xsEnableRule("getHuntingDogs");
     xsEnableRuleGroup("age1EconUpgrades");
-
-    //enable the tacticalBuildings rule
     xsEnableRule("tacticalBuildings");
-
     xsEnableRule("startLandScouting");
     xsEnableRule("age1Progress");
     xsEnableRule("buildHouse");
     xsEnableRule("dockMonitor");
     xsEnableRule("spotAgeUpgrades");
-
-
     xsEnableRule("goAndGatherRelics"); // always gather relics, ignore previous modifier based on difficulty
-
     xsEnableRule("repairBuildings"); // always repair buildings, sorry easy players
-
     xsEnableRule("defendPlanRule");
     xsEnableRule("mainBaseDefPlan1");
     xsEnableRule("findMySettlementsBeingBuilt");
