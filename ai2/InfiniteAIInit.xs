@@ -878,8 +878,9 @@ void init(void)
 
     initCultureSpecifics();
 
-    //Map Specific
+    //Map Handling, eg. fish, farms, vinlandsaga, nomad weirdness
     initMapSpecific();
+    initAutoDetectMap();
 
     //Setup the progression to follow these minor gods.
     kbTechTreeAddMinorGodPref(gAge2MinorGod);
