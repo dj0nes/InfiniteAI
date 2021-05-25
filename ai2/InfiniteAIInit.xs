@@ -3,6 +3,8 @@ void initGreek(void)
     //Modify our favor need.  A pseudo-hack.
     aiSetFavorNeedModifier(10.0);
 
+MyFortress = cUnitTypeFortress;
+
     //Greek scout types.
     gLandScout=cUnitTypeScout;
     gAirScout=cUnitTypePegasus;
@@ -50,6 +52,8 @@ void initEgyptian(void)
 {
     xsEnableRule("fixJammedDropsiteBuildPlans");
     xsEnableRule("trainMercs");
+
+MyFortress = cUnitTypeMigdolStronghold;
 
     //Create a simple TC empower plan
     gEmpowerPlanID=aiPlanCreate("Pharaoh Empower", cPlanEmpower);
@@ -118,6 +122,9 @@ void initNorse(void)
         xsEnableRule("airScout1");
         xsEnableRule("airScout2");
     }
+
+            MyFortress = cUnitTypeHillFort;
+        cBuilderType = cUnitTypeAbstractInfantry;
 
     //Set our trained dropsite PUID.
     aiSetTrainedDropsiteUnitTypeID(cUnitTypeOxCart);
@@ -191,6 +198,11 @@ void initAtlantean(void)
 {
     xsEnableRule("makeAtlanteanHeroes");
 
+            aiSetMinNumberNeedForGatheringAggressvies(3);
+        aiSetMinNumberWantForGatheringAggressives(3);
+
+        MyFortress = cUnitTypePalace;
+
     gLandScout=cUnitTypeOracleScout;
     gWaterScout=cUnitTypeFishingShipAtlantean;
     gAirScout=-1;
@@ -260,6 +272,9 @@ void initAtlantean(void)
 void initChinese(void)
 {
     xsEnableRule("fixJammedDropsiteBuildPlans");
+
+        MyFortress = cUnitTypeCastle;
+
 
     gLandScout=cUnitTypeScoutChinese;
     gWaterScout=cUnitTypeFishingShipChinese;
@@ -399,6 +414,52 @@ void initCultureSpecifics(void)
         initChinese();
         break;
     }
+    }
+}
+
+void initGameData(void)
+{
+    // used to be initRethlAge1()
+    gSomeData = aiPlanCreate("Game Data", cPlanData);
+    if (gSomeData != -1)
+    {
+        aiPlanSetDesiredPriority(gSomeData, 100);
+        aiPlanAddUserVariableInt(gSomeData, cResourceFood, "Food Forecast ", 1);
+        aiPlanAddUserVariableInt(gSomeData, cResourceGold, "Gold Forecast ", 1);
+        aiPlanAddUserVariableInt(gSomeData, cResourceWood, "Wood Forecast ", 1);
+        aiPlanAddUserVariableFloat(gSomeData, 4, "F% ", 1);
+        aiPlanAddUserVariableFloat(gSomeData, 5, "G% ", 1);
+        aiPlanAddUserVariableFloat(gSomeData, 6, "W% ", 1);
+        aiPlanAddUserVariableInt(gSomeData, 7, "Villagers wanted: ", 1);
+        aiPlanAddUserVariableInt(gSomeData, 8, "Caravans ", 1);
+        aiPlanAddUserVariableInt(gSomeData, 9, "Caravans wanted: ", 1);
+        aiPlanAddUserVariableFloat(gSomeData, 10, "gGlutRatio ", 1);
+        aiPlanAddUserVariableFloat(gSomeData, 11, "gFoodGlutRatio ", 1);
+        aiPlanAddUserVariableFloat(gSomeData, 12, "gGoldGlutRatio", 1);
+        aiPlanAddUserVariableFloat(gSomeData, 13, "gWoodGlutRatio ", 1);
+        aiPlanAddUserVariableInt(gSomeData, 14, "NumGoldSites", 1);
+        aiPlanAddUserVariableInt(gSomeData, 15, "NumWoodSites ", 1);
+        aiPlanAddUserVariableFloat(gSomeData, EcoPercentage, "EcoEscrow% ", 1);
+        aiPlanAddUserVariableFloat(gSomeData, MilPercentage, "MilEscrow% ", 1);
+        aiPlanAddUserVariableFloat(gSomeData, RootPercentage, "RootEscrow% ", 1);
+
+
+        //Military
+        aiPlanAddUserVariableString(gSomeData, 84, "=-------- Military --------", 1);
+        aiPlanAddUserVariableInt(gSomeData, LandAttackTarget, "LandAttackTarget", 1);
+        aiPlanAddUserVariableInt(gSomeData, SettlementAttackTarget, "SettleAttackTarget", 1);
+        aiPlanAddUserVariableString(gSomeData, MainUnit, "Main unit ", 1);
+        aiPlanAddUserVariableString(gSomeData, SecondaryUnit, "Secondary unit ", 1);
+        aiPlanAddUserVariableString(gSomeData, ThirdUnit, "Tertiary unit ", 1);
+
+        //Players
+        aiPlanAddUserVariableString(gSomeData, PlayersData, "=-------- InfiniteAI Allies --------", 1);
+        for (i = 1; < cNumberPlayers)
+        {
+            aiPlanAddUserVariableInt(gSomeData, PlayersData+i, "Player "+i, 1);
+            aiPlanSetUserVariableInt(gSomeData, PlayersData+i, 0, 0);
+        }
+        aiPlanSetActive(gSomeData);
     }
 }
 
@@ -792,7 +853,21 @@ void init(void)
         aiSetPauseAllAgeUpgrades(true);
 
     //My stuff
-    initRethlAge1();
+    // initRethlAge1();
+
+    aiSetWonderDeathEventHandler("wonderDeathHandler");
+    aiCommsSetEventHandler("Comms");
+    kbLookAtAllUnitsOnMap(); // this is cheating, but it is super crucial for map detection and consistency and should have little effect on the game as it goes on.
+    
+    // Check with allies and enable donations
+    MessageRel(cPlayerRelationAlly, Tellothers, 1);
+    xsEnableRule("MonitorAllies");
+
+    initGameData();
+
+    if ((aiGetWorldDifficulty() == cDifficultyNightmare) || (aiGetWorldDifficulty() == cDifficultyEasy))
+        gMaxTradeCarts = 15;
+    defWantedCaravans = gMaxTradeCarts;
 
     aiSetGodPowerEventHandler("gpHandler");
     aiSetResignEventHandler("resignHandler");
@@ -834,6 +909,9 @@ void init(void)
     initGatherGoals();
 
     initLightningOrDeathmatchMode();
+
+    if ((kbGetTechStatus(cTechSecretsoftheTitans) > cTechStatusUnobtainable) && (kbGetTechStatus(cTechSecretsoftheTitans) < cTechStatusActive))
+        TitanAvailable = true;
 
     xsEnableRule("buildInitialTemple");
     xsEnableRule("buildResearchGranary");

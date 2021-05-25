@@ -145,6 +145,7 @@ void preInitMap()
         cvMapSubType = VINLANDSAGAMAP;
         xsEnableRule("fishing"); // force builds the dock.
     }
+
     //Tell the AI what kind of map we are on.
     aiSetWaterMap(gTransportMap == true);
 }
@@ -153,6 +154,12 @@ void preInitMap()
 void initMapSpecific()
 {
     // various map overrides
+    if ((cvMapSubType == VINLANDSAGAMAP) || (cRandomMapName == "islands") || (cvRandomMapName == "river styx"))
+    {
+        cvOkToBuildWalls = false;
+        bWallUp = false;
+    }
+
     if ( cRandomMapName == "farmland" )
     {
         int plan=aiPlanCreate("Farmland Forkboy Explore", cPlanExplore);
