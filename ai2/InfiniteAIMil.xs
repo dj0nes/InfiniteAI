@@ -2955,7 +2955,8 @@ inactive
 
 rule ShouldIResign
 minInterval 10         //starts in cAge1
-active
+inactive
+group reth
 {
     if (cvOkToResign == false)
     {

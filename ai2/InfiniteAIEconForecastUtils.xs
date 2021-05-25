@@ -722,8 +722,9 @@ void updateGlutRatio(void)
 
 //==============================================================================
 rule updatePrices   // This rule constantly compares actual supply vs. forecast, updates AICost // values (internal resource prices), and buys/sells at the market as appropriate
-        minInterval 6
-active
+minInterval 6
+inactive
+group reth
 {
     // check for valid forecasts, exit if not ready
     updateGlutRatio();

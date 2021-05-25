@@ -168,7 +168,8 @@ void updateEM(int econPop=-1, int milPop=-1, float econPercentage=0.5,
 
 rule updateEMAllAges
         minInterval 12 //starts in cAge1
-active
+inactive
+group reth
 {
     int civPopTarget=-1;
     int milPopTarget=-1;
@@ -326,7 +327,8 @@ active
 
 rule checkEscrow    //Verify that escrow totals and real inventory are in sync
 minInterval 6 //starts in cAge1
-active
+inactive
+group reth
 {
     static int failCount = 0;
     static bool FirstRun = false; // Special reset in first 5 minutes for wood imbalance while fishing

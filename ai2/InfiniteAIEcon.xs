@@ -2610,7 +2610,8 @@ inactive
 
 rule findFish   //We don't know if this is a water map...if you see fish, it is.
 minInterval 2         //starts in cAge1
-active
+inactive
+group reth
 {
     if ((cRandomMapName == "highland") || (cRandomMapName == "nomad") ||(NoFishing == true) || (cvMapSubType == VINLANDSAGAMAP))
     {

@@ -116,7 +116,8 @@ void initRethlAge2(void)
 //==============================================================================
 rule ActivateRethOverridesAge2
 minInterval 30
-active
+inactive
+group reth
 {
     if (kbGetAge() > cAge1)
     {
@@ -170,7 +171,8 @@ active
 
 rule ActivateRethOverridesAge3
 minInterval 30
-active
+inactive
+group reth
 {
     if (kbGetAge() > cAge2)
     {
@@ -279,7 +281,8 @@ active
 
 rule ActivateRethOverridesAge4
 minInterval 15
-active
+inactive
+group reth
 {
     if (kbGetAge() > cAge3)
     {
@@ -589,7 +592,8 @@ Group Donations
 //==============================================================================
 rule introChat
 minInterval 10
-active
+inactive
+group reth
 {
     if (aiGetWorldDifficulty() != cDifficultyEasy)
     {
@@ -611,7 +615,8 @@ active
 //==============================================================================
 rule myAgeTracker
 minInterval 60
-active
+inactive
+group reth
 {
     static bool bMessage=false;
     static int messageAge=-1;
@@ -1596,7 +1601,8 @@ inactive
 //==============================================================================
 rule Maintenance
 minInterval 2
-active
+inactive
+group reth
 {
     // Self Destruct Plans
     static int LastRun = -1;

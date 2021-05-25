@@ -827,8 +827,21 @@ void initLightningOrDeathmatchMode(void)
 }
 
 
+void initScripted(void)
+{
+    // for when we want a tightly-controlled start to the game
+    echo("got here");
+}
+
+
 void init(void)
 {
+    // for testing only
+    if (cMyCiv == cCivLoki) {
+        initScripted();
+        return;
+    }
+
     // First and foremost: find someone to hate
     if (cvPlayerToAttack < 1)
         updatePlayerToAttack();
@@ -840,6 +853,7 @@ void init(void)
     kbLookAtAllUnitsOnMap();
 
     //Map Handling, eg. fish, farms, vinlandsaga, nomad weirdness
+    preInitMap(); // InfiniteAIMapSpec function to adapt behavior based on map
     initMapSpecific();
     initAutoDetectMap();
 
@@ -908,4 +922,5 @@ void init(void)
     xsEnableRule("findMySettlementsBeingBuilt");
     xsEnableRule("updatePlayerToAttack"); // update player to attack
     xsEnableRule("buildArmory"); // build an armory at some point
+    xsEnableRuleGroup("reth"); // disabled these by default for scripted start testing
 }

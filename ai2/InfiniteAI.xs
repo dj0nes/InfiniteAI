@@ -25,7 +25,6 @@ void main(void)
     echo("AI start at time "+xsGetTime());
     aiRandSetSeed(-1); // Set our random seed.  "-1" is a random init.
     kbAreaCalculate(); // Calculate some areas.
-    preInitMap(); // InfiniteAIMapSpec function to adapt behavior based on map
     persDecidePersonality(); // Set the control variables before anything else
     xsEnableRule("initAfterDelay"); //Wait, then go.
 }
