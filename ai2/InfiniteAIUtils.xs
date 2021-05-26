@@ -45,7 +45,8 @@ bool configQuery( int queryID = -1, int unitType = -1, int action = -1, int stat
     kbUnitQuerySetPlayerID(queryID, player);
     kbUnitQuerySetUnitType(queryID, unitType);
     kbUnitQuerySetActionType(queryID, action);
-    kbUnitQuerySetState(queryID, state);
+    if(state > -1)
+        kbUnitQuerySetState(queryID, state);
 
     kbUnitQuerySetPosition(queryID, center);
     kbUnitQuerySetAscendingSort(queryID, sort);
@@ -87,6 +88,29 @@ bool configQueryRelation( int queryID = -1, int unitType = -1, int action = -1, 
 
     return(true);
 }
+
+
+int getStartingUlfsarkID(void) 
+{
+    // add the one ulfsark to this plan
+    int qid = kbUnitQueryCreate("getUlfsarksQuery");
+    // if (qid < 0) return -1;
+
+    configQuery(qid, cUnitTypeAbstractInfantry, -1, cUnitStateAlive, cMyID);
+    kbUnitQueryResetResults(qid);
+    int numBuilders = kbUnitQueryExecute(qid);
+    for (i=0; < numBuilders)
+    {
+        int builderID = kbUnitQueryGetResult(qid, i);
+        if(i == 0) {
+            echo("getStartingUlfsarkID: found ulfsark ID: " + builderID);
+            return(builderID);
+        }
+    }
+    return(-1);
+}
+
+
 //==============================================================================
 int NumUnitsOnAreaGroupByRel(bool Player = false, int AreaGroupID = -1, int UnitID = -1, int PlayerIDOrRelation = cPlayerRelationSelf, int iState = cUnitStateAlive, int Action = cActionAny)
 {

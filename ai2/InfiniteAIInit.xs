@@ -132,7 +132,8 @@ void initNorse(void)
     //Create a reserve plan for our main base for some Ulfsarks if we're not on VS, TM, or Nomad.
 
     //Create a simple plan to maintain X Ulfsarks.
-    xsEnableRule("ulfsarkMaintain");
+    if(onBuildOrders < 0)
+        xsEnableRule("ulfsarkMaintain");
     // On easy or moderate, get two extra oxcarts ASAP before we're at econ pop cap
     if ( aiGetWorldDifficulty() <= cDifficultyModerate )
     {
@@ -164,6 +165,7 @@ void initNorse(void)
             aiPlanSetActive(dmUlfPlan);
         }
     }
+
     //Norse scout types.
     gLandScout=cUnitTypeAbstractScout;
     gAirScout=-1;
@@ -172,7 +174,6 @@ void initNorse(void)
     gGatherRelicType=cUnitTypeHeroNorse;
     if (cMyCiv == cCivOdin)
         gAirScout = cUnitTypeRaven;
-
 
     // Default to random minor god choices, override below if needed
     gAge2MinorGod=kbTechTreeGetMinorGodChoices(aiRandInt(2), cAge2);
@@ -753,60 +754,6 @@ void initLateAgeAttack(void)
 }
 
 
-void initGatherGoals(void)
-{
-    //Create our econ goal (which is really just to store stuff together).
-    gGatherGoalPlanID=aiPlanCreate("GatherGoals", cPlanGatherGoal);
-    if (gGatherGoalPlanID >= 0)
-    {
-        //Overall percentages.
-        aiPlanSetDesiredPriority(gGatherGoalPlanID, 90);
-        aiPlanSetVariableFloat(gGatherGoalPlanID, cGatherGoalPlanScriptRPGPct, 0, 1.0);
-        aiPlanSetVariableFloat(gGatherGoalPlanID, cGatherGoalPlanCostRPGPct, 0, 1.0);
-        aiPlanSetNumberVariableValues(gGatherGoalPlanID, cGatherGoalPlanGathererPct, 4, true);
-        aiPlanSetVariableFloat(gGatherGoalPlanID, cGatherGoalPlanGathererPct, cResourceGold, 0.0);
-        aiPlanSetVariableFloat(gGatherGoalPlanID, cGatherGoalPlanGathererPct, cResourceWood, 0.0);
-        aiPlanSetVariableFloat(gGatherGoalPlanID, cGatherGoalPlanGathererPct, cResourceFood, 1.0);
-        aiPlanSetVariableFloat(gGatherGoalPlanID, cGatherGoalPlanGathererPct, cResourceFavor, 0.0);
-
-        //Standard RB setup.
-        aiPlanSetNumberVariableValues(gGatherGoalPlanID, cGatherGoalPlanNumFoodPlans, 5, true);
-        aiPlanSetVariableInt(gGatherGoalPlanID, cGatherGoalPlanNumFoodPlans, cAIResourceSubTypeHunt, 0);
-        if (aiGetGameMode() == cGameModeDeathmatch)
-            aiPlanSetVariableInt(gGatherGoalPlanID, cGatherGoalPlanNumFoodPlans, cAIResourceSubTypeEasy, 0);
-        else
-            aiPlanSetVariableInt(gGatherGoalPlanID, cGatherGoalPlanNumFoodPlans, cAIResourceSubTypeEasy, 1);
-        aiPlanSetVariableInt(gGatherGoalPlanID, cGatherGoalPlanNumFoodPlans, cAIResourceSubTypeHuntAggressive, 0);
-        aiPlanSetVariableInt(gGatherGoalPlanID, cGatherGoalPlanNumFoodPlans, cAIResourceSubTypeFarm, 0);
-        aiPlanSetVariableInt(gGatherGoalPlanID, cGatherGoalPlanNumFoodPlans, cAIResourceSubTypeFish, 0);
-        aiPlanSetVariableInt(gGatherGoalPlanID, cGatherGoalPlanNumWoodPlans, 0, 0);
-        aiPlanSetVariableInt(gGatherGoalPlanID, cGatherGoalPlanNumGoldPlans, 0, 0);
-        aiPlanSetVariableInt(gGatherGoalPlanID, cGatherGoalPlanNumFavorPlans, 0, 0);
-        //Hunt on Erebus and River Styx.
-        if ((cvRandomMapName == "erebus") || (cvRandomMapName == "river styx"))
-        {
-            aiPlanSetVariableInt(gGatherGoalPlanID, cGatherGoalPlanNumFoodPlans, cAIResourceSubTypeEasy, 0);
-            aiSetMinNumberNeedForGatheringAggressvies(1);
-        }
-        //Cost weights.
-        aiPlanSetNumberVariableValues(gGatherGoalPlanID, cGatherGoalPlanResourceCostWeight, 4, true);
-        aiPlanSetVariableFloat(gGatherGoalPlanID, cGatherGoalPlanResourceCostWeight, cResourceGold, 1.0);
-        aiPlanSetVariableFloat(gGatherGoalPlanID, cGatherGoalPlanResourceCostWeight, cResourceWood, 1.0);
-        aiPlanSetVariableFloat(gGatherGoalPlanID, cGatherGoalPlanResourceCostWeight, cResourceFood, 1.0);
-        aiPlanSetVariableFloat(gGatherGoalPlanID, cGatherGoalPlanResourceCostWeight, cResourceFavor, 1.0);
-        //Set our farm limits.
-        aiPlanSetVariableInt(gGatherGoalPlanID, cGatherGoalPlanFarmLimitPerPlan, 0, 20); //  Up from 4
-        aiPlanSetVariableInt(gGatherGoalPlanID, cGatherGoalPlanMaxFarmLimit, 0, 40); //  Up from 24
-        aiSetFarmLimit(aiPlanGetVariableInt(gGatherGoalPlanID, cGatherGoalPlanFarmLimitPerPlan, 0));
-        aiPlanSetActive(gGatherGoalPlanID);
-        //Do our late econ init.
-        postInitEcon();
-        //Lastly, update our EM.
-        updateEMAllAges();
-    }
-}
-
-
 void initLightningOrDeathmatchMode(void)
 {
     if ((aiGetGameMode() == cGameModeDeathmatch) || (aiGetGameMode() == cGameModeLightning)) // Add an emergency temple, and 10 houses)
@@ -827,21 +774,80 @@ void initLightningOrDeathmatchMode(void)
 }
 
 
-void initScripted(void)
+void updateGatherGoals(void)
 {
-    // for when we want a tightly-controlled start to the game
-    echo("got here");
+    //Create our econ goal (which is really just to store stuff together).
+    gGatherGoalPlanID = aiPlanCreate("GatherGoals", cPlanGatherGoal);
+    if (gGatherGoalPlanID < 0)
+        return;
+
+    //Overall percentages.
+    aiPlanSetDesiredPriority(gGatherGoalPlanID, 90);
+    aiPlanSetVariableFloat(gGatherGoalPlanID, cGatherGoalPlanScriptRPGPct, 0, 1.0); // script in charge
+    aiPlanSetVariableFloat(gGatherGoalPlanID, cGatherGoalPlanCostRPGPct, 0, 0);
+
+    //Standard RB setup.
+    aiPlanSetNumberVariableValues(gGatherGoalPlanID, cGatherGoalPlanNumFoodPlans, 5, true);
+    aiPlanSetVariableInt(gGatherGoalPlanID, cGatherGoalPlanNumFoodPlans, cAIResourceSubTypeEasy, numFoodEasyPlans);
+    aiPlanSetVariableInt(gGatherGoalPlanID, cGatherGoalPlanNumFoodPlans, cAIResourceSubTypeHunt, numFoodHuntPlans);
+    aiPlanSetVariableInt(gGatherGoalPlanID, cGatherGoalPlanNumFoodPlans, cAIResourceSubTypeHuntAggressive, numFoodHuntAggressivePlans);
+    aiPlanSetVariableInt(gGatherGoalPlanID, cGatherGoalPlanNumFoodPlans, cAIResourceSubTypeFarm, numFarmPlans);
+    aiPlanSetVariableInt(gGatherGoalPlanID, cGatherGoalPlanNumFoodPlans, cAIResourceSubTypeFish, numFishPlans);
+    aiPlanSetVariableInt(gGatherGoalPlanID, cGatherGoalPlanNumWoodPlans, 0, numWoodPlans);
+    aiPlanSetVariableInt(gGatherGoalPlanID, cGatherGoalPlanNumGoldPlans, 0, numGoldPlans);
+    aiPlanSetVariableInt(gGatherGoalPlanID, cGatherGoalPlanNumFavorPlans, 0, numFavorPlans);
+
+    
+    aiPlanSetNumberVariableValues(gGatherGoalPlanID, cGatherGoalPlanResourceCostWeight, gatherPlanCostWeight, true);
+    aiPlanSetVariableFloat(gGatherGoalPlanID, cGatherGoalPlanResourceCostWeight, cResourceGold, gatherGoldCostWeight);
+    aiPlanSetVariableFloat(gGatherGoalPlanID, cGatherGoalPlanResourceCostWeight, cResourceWood, gatherWoodCostWeight);
+    aiPlanSetVariableFloat(gGatherGoalPlanID, cGatherGoalPlanResourceCostWeight, cResourceFood, gatherFoodCostWeight);
+    aiPlanSetVariableFloat(gGatherGoalPlanID, cGatherGoalPlanResourceCostWeight, cResourceFavor, gatherFavorCostWeight);
+    
+    //Set up AI Cost weights.
+    kbSetAICostWeight(cResourceFood, gatherFoodCostWeight);
+    kbSetAICostWeight(cResourceWood, gatherWoodCostWeight);
+    kbSetAICostWeight(cResourceGold, gatherGoldCostWeight);
+    kbSetAICostWeight(cResourceFavor, gatherFavorCostWeight);
+    
+    //Set our farm limits.
+    aiPlanSetVariableInt(gGatherGoalPlanID, cGatherGoalPlanFarmLimitPerPlan, 0, farmLimitPerPlan); //  Up from 4
+    aiPlanSetVariableInt(gGatherGoalPlanID, cGatherGoalPlanMaxFarmLimit, 0, maxFarmLimit); //  Up from 24
+    aiSetFarmLimit(farmLimitPerPlan);
+    
+    //Do our late econ init, inlined from postInitEcon()
+    //Set the RGP weights.  Script in charge.
+    aiSetResourceGathererPercentageWeight(cRGPScript, 1.0);
+    aiSetResourceGathererPercentageWeight(cRGPCost, 0.0);
+
+    aiPlanSetNumberVariableValues(gGatherGoalPlanID, cGatherGoalPlanGathererPct, 4, true);
+    aiPlanSetVariableFloat(gGatherGoalPlanID, cGatherGoalPlanGathererPct, cResourceFood, foodPct);
+    aiPlanSetVariableFloat(gGatherGoalPlanID, cGatherGoalPlanGathererPct, cResourceWood, woodPct);
+    aiPlanSetVariableFloat(gGatherGoalPlanID, cGatherGoalPlanGathererPct, cResourceGold, goldPct);
+    aiPlanSetVariableFloat(gGatherGoalPlanID, cGatherGoalPlanGathererPct, cResourceFavor, favorPct);
+
+    aiSetResourceGathererPercentage(cResourceFood, foodPct, false, cRGPScript); // Changed these to 100% food early then
+    aiSetResourceGathererPercentage(cResourceWood, woodPct, false, cRGPScript); // the setEarlyEcon rule above will set the
+    aiSetResourceGathererPercentage(cResourceGold, goldPct, false, cRGPScript); // former "initial" values once we have 7 (or 3 atlantean) gatherers.
+    aiSetResourceGathererPercentage(cResourceFavor, favorPct, false, cRGPScript);
+    aiNormalizeResourceGathererPercentages(cRGPScript);
+
+    int mainBaseID = kbBaseGetMainID(cMyID);
+    aiSetResourceBreakdown(cResourceFood, cAIResourceSubTypeEasy, numFoodEasyPlans, foodEasyPriority, 1.0, mainBaseID);
+    aiSetResourceBreakdown(cResourceFood, cAIResourceSubTypeHunt, numFoodHuntPlans, foodHuntPriority, 1.0, mainBaseID);
+    aiSetResourceBreakdown(cResourceFood, cAIResourceSubTypeHuntAggressive, numFoodHuntAggressivePlans, foodHuntAggressivePriority, 1.0, mainBaseID);
+    aiSetResourceBreakdown(cResourceFood, cAIResourceSubTypeFish, numFishPlans, foodFishingPriority, 1.0, mainBaseID);
+    aiSetResourceBreakdown(cResourceFavor, cAIResourceSubTypeEasy, numFavorPlans, favorPriority, 1.0, mainBaseID);
+    aiSetResourceBreakdown(cResourceWood, cAIResourceSubTypeEasy, numWoodPlans, woodPriority, 1.0, mainBaseID);
+    aiSetResourceBreakdown(cResourceGold, cAIResourceSubTypeEasy, numGoldPlans, goldPriority, 1.0, mainBaseID);
+
+    aiPlanSetActive(gGatherGoalPlanID);
+    echo("updateGatherGoals ran");
 }
 
-
+include "scripted/loki_attacker.xs";
 void init(void)
 {
-    // for testing only
-    if (cMyCiv == cCivLoki) {
-        initScripted();
-        return;
-    }
-
     // First and foremost: find someone to hate
     if (cvPlayerToAttack < 1)
         updatePlayerToAttack();
@@ -851,6 +857,32 @@ void init(void)
     // this is cheating, but it is super crucial for map detection and consistency
     // and should have little effect on the game as it goes on.
     kbLookAtAllUnitsOnMap();
+
+    aiSetRandomMap(true); // I don't know why this needs to be true
+    aiSetAutoGatherMilitaryUnits(false);
+    aiSetAttackResponseDistance(60.0); // Set the default attack response distance.
+    aiSetDefaultStance(cUnitStanceDefensive); // set our default stance to defensive
+    aiCommsSetEventHandler("Comms");
+    aiSetExploreDangerThreshold(300.0);
+
+    // for testing only
+    if (cMyCiv == cCivLoki && aiGetPersonality() == PersonalityAttacker) {
+        initScriptedLokiAttacker();
+        return;
+    }
+
+    // update econ stuff if needed
+    if (cMyCulture == cCultureEgyptian)
+    {
+        woodPriority = 50;
+        goldPriority = 55;
+    }
+    //Hunt on Erebus and River Styx.
+    if ((cvRandomMapName == "erebus") || (cvRandomMapName == "river styx") || aiGetGameMode() == cGameModeDeathmatch)
+    {
+        aiPlanSetVariableInt(gGatherGoalPlanID, cGatherGoalPlanNumFoodPlans, cAIResourceSubTypeEasy, 0);
+        aiSetMinNumberNeedForGatheringAggressvies(1);
+    }
 
     //Map Handling, eg. fish, farms, vinlandsaga, nomad weirdness
     preInitMap(); // InfiniteAIMapSpec function to adapt behavior based on map
@@ -868,7 +900,8 @@ void init(void)
     initWallBehavior();
     initRushBehavior();
     initLateAgeAttack();
-    initGatherGoals();
+    updateGatherGoals();
+    updateEMAllAges(); // update our EM since updateGatherGoals no longer does this
     initLightningOrDeathmatchMode();
 
     if ((kbGetTechStatus(cTechSecretsoftheTitans) > cTechStatusUnobtainable) && (kbGetTechStatus(cTechSecretsoftheTitans) < cTechStatusActive))
@@ -883,15 +916,10 @@ void init(void)
     aiSetAgeEventHandler(cAge3, "age3Handler");
     aiSetAgeEventHandler(cAge4, "age4Handler");
     aiSetAgeEventHandler(cAge5, "age5Handler");
-    aiSetRandomMap(true); // I don't know why this needs to be true
-    aiCommsSetEventHandler("Comms");
     aiSetGodPowerEventHandler("gpHandler");
     aiSetResignEventHandler("resignHandler");
-    aiSetExploreDangerThreshold(300.0);
     aiSetWonderDeathEventHandler("wonderDeathHandler");
-    aiSetAutoGatherMilitaryUnits(false);
-    aiSetAttackResponseDistance(60.0); // Set the default attack response distance.
-    aiSetDefaultStance(cUnitStanceDefensive); // set our default stance to defensive
+
     if (cvMaxAge <= kbGetAge()) // Are we starting at or beyond our max age?
         aiSetPauseAllAgeUpgrades(true);
     

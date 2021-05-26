@@ -1906,7 +1906,7 @@ inactive
 //==============================================================================
 rule buildInitialTemple //and rebuild it if destroyed
 inactive
-minInterval 41 //starts in cAge1
+minInterval 20 //starts in cAge1
 {
 
     if (gTransportMap == true)
@@ -1920,7 +1920,7 @@ minInterval 41 //starts in cAge1
         return;
     }
 
-    if ((xsGetTime() < 2*60*1000) && (aiGetWorldDifficulty() <= cDifficultyNightmare))
+    if ((xsGetTime() < 1*60*1000) && (aiGetWorldDifficulty() <= cDifficultyNightmare))
         return;
 
     int mainBaseID = kbBaseGetMainID(cMyID);
@@ -1997,6 +1997,87 @@ minInterval 41 //starts in cAge1
         aiPlanSetActive(templePlanID);
     }
 }
+
+
+rule buildRushTemple
+inactive
+minInterval 5 //starts in cAge1
+group lokiRushAge1
+{
+    // stolen from buildSkyPassages
+    int MHPTC = getMainBaseUnitIDForPlayer(aiGetMostHatedPlayerID());
+    if (MHPTC < 0) return; // we need an enemy TC target
+    vector enemyTCvec = kbUnitGetPosition(MHPTC);
+
+    vector offset = kbBaseGetLocation(cMyID, kbBaseGetMainID(cMyID)) - enemyTCvec;
+    offset = xsVectorNormalize(offset);
+    vector target = enemyTCvec + (offset * 70.0);
+
+    // Now, check if that's on ground, and just give up if it isn't
+    // Figure out if it's on our enemy's areaGroup.  If not, step 5% closer until it is.
+    int enemyAreaGroup = -1;
+    enemyAreaGroup = kbAreaGroupGetIDByPosition(enemyTCvec);
+
+    vector towardEnemy = offset * -5.0; // 5m away from me, toward enemy TC
+    bool success = false;
+
+    for (i=0; <18) // Keep testing until areaGroups match
+    {
+        int testAreaGroup = kbAreaGroupGetIDByPosition(target);
+        int NumEnemy = getNumUnitsByRel(cUnitTypeBuildingsThatShoot, cUnitStateAlive, -1, cPlayerRelationEnemy, target, 23.0, false);
+        int NumSelf = getNumUnits(cUnitTypeTemple, cUnitStateAliveOrBuilding, -1, cMyID, target, 100.0);
+        if ((testAreaGroup == enemyAreaGroup) && (NumEnemy < 1) && (NumSelf < 1))
+        {
+            success = true;
+            break;
+        }
+        else
+        {
+            target = target + towardEnemy; // Try a bit closer
+        }
+    }
+    if (success == false)
+    {
+        echo("buildRushTemple - no success, bailing");
+        return;
+    }
+
+    int templePlanID=aiPlanCreate("build rush temple", cPlanBuild);
+    if (templePlanID < 0)
+        return;
+    aiPlanSetVariableInt(templePlanID, cBuildPlanBuildingTypeID, 0, cUnitTypeTemple);
+    aiPlanSetVariableInt(templePlanID, cBuildPlanMaxRetries, 0, 100);
+    // aiPlanSetVariableInt(templePlanID, cBuildPlanRetries, 0, 10);
+    aiPlanSetVariableInt(templePlanID, cBuildPlanAreaID, 0, kbAreaGetIDByPosition(target));
+    aiPlanSetVariableInt(templePlanID, cBuildPlanNumAreaBorderLayers, 0, 1);
+    aiPlanSetDesiredPriority(templePlanID, 100);
+    aiPlanSetEscrowID(templePlanID, cEconomyEscrowID);
+    aiPlanAddUnitType(templePlanID, cBuilderType, 1, 1, 1);
+    aiPlanSetActive(templePlanID);
+
+    // add the starter ulfsark to this plan
+    int ulfsarkID = getStartingUlfsarkID();
+    aiPlanAddUnit(templePlanID, ulfsarkID);
+    echo("added to templePlanID " + templePlanID + " builderID: " + ulfsarkID);
+
+    // move the ulfasark to the build area, which also scouts so placement can happen
+    aiTaskUnitMove(ulfsarkID, target);
+
+    xsDisableSelf();
+}
+
+
+
+rule buildRushLonghouse
+inactive
+minInterval 5 //starts in cAge1
+group lokiRushAge2
+{
+    // use createSimpleBuildPlan
+    // build it in the new base
+    // use the hersir and the ulfsark to get it up fast
+}
+
 
 //==============================================================================
 rule buildArmory

@@ -460,3 +460,45 @@ extern bool CanIChat = true;              // This will allow the Ai to send chat
 extern bool bHouseBunkering = true;       // Makes the Ai bunker up towers with Houses.
 extern bool bWallAllyMB = true;          // Walls up TCs for human allies, only the team captain can do this and MBs are skipped.
 extern bool bWallCleanup = true;          // Prevents the AI from building small wall pieces inside of gates and/or deletes them if one were to slip through the check.
+
+extern int onBuildOrders = -1;
+extern int dwarfTypeID = -1;
+extern int gathererTypeID = -1;
+
+// econ management, start of a major refactor
+
+//Set up the initial resource break downs.
+extern int numFoodEasyPlans = 1;
+extern int numFoodHuntPlans = 0;
+extern int numFoodHuntAggressivePlans = 0;
+extern int numFarmPlans = 0;
+extern int numFishPlans = 0;
+extern int numWoodPlans = 0;
+extern int numGoldPlans = 0;
+extern int numFavorPlans = 0;
+
+//Cost weights.
+extern int gatherPlanCostWeight = 4;
+extern float gatherGoldCostWeight = 1.0;
+extern float gatherWoodCostWeight = 1.0;
+extern float gatherFoodCostWeight = 1.0;
+extern float gatherFavorCostWeight = 1.0;
+
+// farm limits
+extern int farmLimitPerPlan = 20;
+extern int maxFarmLimit = 40;
+
+// resource rough percent of gatherer allotment (?)
+extern float foodPct = 0.9;
+extern float woodPct = 0.0;
+extern float goldPct = 0.01;
+extern float favorPct = 0.0;
+
+// gather plan priority per resource
+extern int foodEasyPriority = 100;
+extern int foodHuntPriority = 100;
+extern int foodHuntAggressivePriority = 90;
+extern int foodFishingPriority = 100;
+extern int favorPriority = 40;
+extern int woodPriority = 55;
+extern int goldPriority = 100;
