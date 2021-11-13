@@ -36,6 +36,7 @@ inactive
 {
     echo("initAfterDelay at time " + xsGetTime());
     initInfinitePopModeCheck(); // can use infinitePopMode variable after this
+    resetGlobalsWithInfinitePop();
     init();
     xsDisableSelf();
 }

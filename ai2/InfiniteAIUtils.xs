@@ -9,6 +9,10 @@ bool initInfinitePopModeCheck(void) {
     infinitePopMode = kbGetPop() == 0;
 }
 
+void resetGlobalsWithInfinitePop(void) {
+    gMaxTradeCarts = 100; // I'm sorry, CPU
+}
+
 
 //==============================================================================
 bool equal(vector left=cInvalidVector, vector right=cInvalidVector) //true if the given vectors are equal
