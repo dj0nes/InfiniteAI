@@ -1,5 +1,16 @@
 bool banGatherersInGoldPlan = true; // initially ban gatherers so they focus on food
 
+void setRushBaseInfo()
+{
+    rushTempleID = findUnit(cUnitTypeTemple);
+    rushTempleLocation = kbUnitGetPosition(rushTempleID);
+    rushBaseID = kbUnitGetBaseID(rushTempleID);
+    rushBaseLocation = rushTempleLocation;
+    // vector rushBaseFrontVector = kbBaseGetFrontVector(cMyID, rushBaseID);
+    // echo("rushBaseFrontVector: " + rushBaseFrontVector);
+}
+
+
 rule addGoldPlan
 inactive
         minInterval 15 // after first gatherer is created
@@ -11,6 +22,7 @@ group lokiRushAge1
     updateGatherGoals();
     xsDisableSelf();
 }
+
 
 rule ageUpASAP
 inactive
@@ -62,7 +74,7 @@ group lokiRushAge1
 
 rule checkDwarves
 inactive
-minInterval 5
+minInterval 2
 group lokiRushAge1
 {
     int dwarfTypeID = kbTechTreeGetUnitIDTypeByFunctionIndex(cUnitFunctionGatherer, 1);
@@ -111,6 +123,19 @@ group lokiRushAge1
             echo("added to gold plan " + goldPlanID + " dwarfUnitID: " + dwarfID);
         }
     }
+
+
+    int attackType = kbUnitPickGetAttackUnitType(gRushUPID);
+    echo("attackType: " + attackType);
+    echo("kbUnitPickGetGoalCombatEfficiencyType: " + kbUnitPickGetGoalCombatEfficiencyType(gRushUPID));
+    echo("kbUnitPickGetNumberResults: " + kbUnitPickGetNumberResults(gRushUPID));
+    echo("kbUnitPickGetResult: " + kbUnitPickGetResult(gRushUPID, 0));
+    echo("kbUnitPickGetResult: " + kbUnitPickGetResult(gRushUPID, 1));
+    echo("kbUnitPickGetResult: " + kbUnitPickGetResult(gRushUPID, 2));
+    echo("kbUnitPickGetResult: " + kbUnitPickGetResult(gRushUPID, 3));
+    echo("kbUnitPickGetResult: " + kbUnitPickGetResult(gRushUPID, 4));
+
+
 }
 
 rule age2Manager
@@ -121,7 +146,91 @@ group lokiRushAge2
     static bool runStep1 = true;
     if(runStep1) {
         runStep1 = false;
-        xsEnableRule("buildRushLonghouse");
+        setRushBaseInfo();
+
+        // xsEnableRule("trainHersir");
+        // xsEnableRule("buildRushLonghouse");
+        aiTaskUnitTrain(findUnit(cUnitTypeAbstractSettlement), gathererTypeID);
+
+        foodPct = 0.5;
+        woodPct = 0.2;
+        goldPct = 0.3;
+        numWoodPlans = 1;
+        numGoldPlans = 1;
+        foodEasyPriority = 70;
+        goldPriority = 95;
+        woodPriority = 70;
+        updateGatherGoals();
+
+        // todo: create villiager and dwarf maintain plans like civPopPlan
+        createCivPopPlan(10);
+
+
+        rushBaseDefendPlanID = createDefOrAttackPlan("rushBaseDefendPlan", true, 50, 20, rushBaseLocation, rushBaseID, 35, true);
+        rushBaseAttackPlanID = createDefOrAttackPlan("rushBaseAttackPlan", false, 50, 20, rushBaseLocation, rushBaseID, 95, true);
+    
+
+        int numTypes = 2;
+        int rushSize = 50;
+
+        int enemyBaseID = kbBaseGetMainID(aiGetMostHatedPlayerID());
+        int enemyID = aiGetMostHatedPlayerID();
+
+        gRushUPID = initUnitPicker("Rush", numTypes, -1, -1, rushSize, rushSize*1.25, 3);
+        // kbUnitPickSetGoalCombatEfficiencyType(gRushUPID, cUnitTypeLogicalTypeLandMilitary);
+        gLandAttackGoalID = createSimpleAttackGoal("Main Land Attack", enemyID, gRushUPID, 10, cAge2, -1, rushBaseID, false);
+        // aiPlanSetVariableInt(gLandAttackGoalID, cGoalPlanUnitPickerFrequency, 0, 1);
+
+
+        aiSetEconomyPop(99);
+        aiSetMilitaryPop(99);
+
+        echo("econ pop: " + aiGetEconomyPop());
+        echo("mil pop: " + aiGetMilitaryPop());
+
+        aiSetEconomyPercentage(1.0);
+        aiSetMilitaryPercentage(1.0);
+
+        kbEscrowSetCap(cEconomyEscrowID, cResourceFood, 800.0); // Age 3
+        kbEscrowSetCap(cEconomyEscrowID, cResourceWood, 200.0);
+        kbEscrowSetCap(cEconomyEscrowID, cResourceGold, 500.0); // Age 3
+        kbEscrowSetCap(cEconomyEscrowID, cResourceFavor, 30.0);
+        kbEscrowSetCap(cMilitaryEscrowID, cResourceFood, 100.0);
+        kbEscrowSetCap(cMilitaryEscrowID, cResourceWood, 200.0); // Towers
+        kbEscrowSetCap(cMilitaryEscrowID, cResourceGold, 200.0); // Towers
+        kbEscrowSetCap(cMilitaryEscrowID, cResourceFavor, 30.0);
+
+        // aiPlanSetVariableBool(gLandAttackGoalID, cGoalPlanIdleAttack, 0, false);
+        // aiPlanSetVariableInt(gLandAttackGoalID, cGoalPlanTarget, 0, enemyBaseID);
+
+        // aiPlanSetVariableVector(gLandAttackGoalID, cGoalPlanTargetPoint, 0, kbBaseGetLocation(enemyID, enemyBaseID));
+        // echo("cvPlayerToAttack: " + cvPlayerToAttack);
+        // aiPlanSetVariableInt(rushBaseAttackPlanID, cAttackPlanPlayerID, 0, aiGetMostHatedPlayerID());
+        // aiPlanSetUnitStance(rushBaseAttackPlanID, cUnitStancePassive);
+        // aiPlanAddUnitType(rushBaseAttackPlanID, cUnitTypeLogicalTypeLandMilitary, 1, 5, 5);
+        // aiPlanSetVariableInt(rushBaseAttackPlanID, cAttackPlanBaseAttackMode, 0, cAttackPlanBaseAttackModeWeakest);
+        // aiPlanSetInitialPosition(rushBaseAttackPlanID, rushBaseLocation);
+        // aiPlanSetVariableVector(rushBaseAttackPlanID, cAttackPlanGatherPoint, 0, rushBaseLocation);
+        // echo("rushBaseLocation: " + rushBaseLocation);
+        // aiPlanSetOrphan(rushBaseAttackPlanID, true); // dont know why we'd want this anyways
+
+        // will probably want to config this to be temples, then settlements
+        // aiPlanSetVariableInt(PlanID, cAttackPlanTargetTypeID, 0, cUnitTypeLogicalTypeIdleCivilian);
+
+        // xsEnableRule("updateBreakdowns");
+        // xsEnableRule("updateFoodBreakdown");
+
+        // //Init our myth unit rule.
+        // xsEnableRule("trainMythUnit");
+
+        // //enable our raiding party rule
+        // xsEnableRule("createRaidingParty");
+
+        // //enable the attackEnemySettlement rule
+        // xsEnableRule("attackEnemySettlement");
+
+        // //enable the createLandAttack rule
+        // xsEnableRule("createLandAttack");
     }
     return;
 }
@@ -176,14 +285,21 @@ group lokiRushAge1
     {
         runStep3 = false;
 
-        foodPct = 0.6;
-        woodPct = 0.1;
-        goldPct = 0.3;
+        foodPct = 0.4;
+        woodPct = 0.2;
+        goldPct = 0.4;
         numWoodPlans = 1;
+        woodPriority = 70;
         updateGatherGoals();
+
+        // kick out the one gatherer we probably have, executed in checkDwarves
+        banGatherersInGoldPlan = true;
 
         xsEnableRule("trainHersir");
         xsEnableRule("trainDwarf");
+
+        // set the rush base id and location for further use
+        setRushBaseInfo();
     }
     else if(kbGetAge() == cAge1)
     {
@@ -227,7 +343,28 @@ void initScriptedLokiAttacker(void)
     kbTechTreeAddMinorGodPref(gAge4MinorGod);
     echo("Minor god plan is "+kbGetTechName(gAge2MinorGod)+", "+kbGetTechName(gAge3MinorGod)+", "+kbGetTechName(gAge4MinorGod));
 
-    xsEnableRule("age1Manager");
+    // debugging handling in different ages
+    if(kbGetAge() == cAge1) 
+    {
+        xsEnableRule("age1Manager");
+    } 
+    else if(kbGetAge() == cAge2)
+    {
+        foodPct = 0.5;
+        woodPct = 0.2;
+        goldPct = 0.3;
+        numWoodPlans = 1;
+        numGoldPlans = 1;
+        foodEasyPriority = 70;
+        goldPriority = 95;
+        woodPriority = 70;
+        updateGatherGoals();
+
+        xsEnableRule("checkDwarves");
+        xsEnableRule("createHerdplan");
+        xsEnableRule("age2Manager");
+        age2Manager();
+    }
 
     echo("initScriptedLokiAttacker done at: " + xsGetTime());
 }

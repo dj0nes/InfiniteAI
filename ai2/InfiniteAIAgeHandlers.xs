@@ -1,5 +1,6 @@
 void age2Handler(int age=1)
 {
+    echo("age2Handler");
     gLastAgeHandled = cAge2;
     if (cvMaxAge == age)
     {
@@ -11,6 +12,7 @@ void age2Handler(int age=1)
     xsEnableRule("baseAttackTracker");
     xsEnableRule("otherBasesDefPlans");
     xsEnableRule("getNextGathererUpgrade");
+    xsEnableRuleGroup("classicalRule");
 
     //activate ObeliskClearingPlan if there is an Egyptian enemy,
     //enable the hesperides rule if there's an Oranos or Gaia player

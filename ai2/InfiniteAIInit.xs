@@ -866,10 +866,10 @@ void init(void)
     aiSetExploreDangerThreshold(300.0);
 
     // for testing only
-    if (cMyCiv == cCivLoki && aiGetPersonality() == PersonalityAttacker) {
-        initScriptedLokiAttacker();
-        return;
-    }
+    // if (cMyCiv == cCivLoki && aiGetPersonality() == PersonalityAttacker) {
+    //     initScriptedLokiAttacker();
+    //     return;
+    // }
 
     // update econ stuff if needed
     if (cMyCulture == cCultureEgyptian)

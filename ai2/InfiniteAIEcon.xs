@@ -1114,23 +1114,23 @@ void econAge4Handler(int age=0)
 }
 
 //==============================================================================
-void createCivPopPlan()
+void createCivPopPlan(int number = 10)
 {
     gCivPopPlanID=aiPlanCreate("civPop", cPlanTrain);
-    if (gCivPopPlanID >= 0)
-    {
-        //Get our mainline villager PUID.
-        int gathererPUID=kbTechTreeGetUnitIDTypeByFunctionIndex(cUnitFunctionGatherer,0);
-        aiPlanSetVariableInt(gCivPopPlanID, cTrainPlanUnitType, 0, gathererPUID);
-        //Train off of economy escrow.
-        aiPlanSetEscrowID(gCivPopPlanID, cEconomyEscrowID);
-        //Default to 10.
-        aiPlanSetVariableInt(gCivPopPlanID, cTrainPlanNumberToMaintain, 0, 10);
-        aiPlanSetVariableInt(gCivPopPlanID, cTrainPlanBuildFromType, 0, cUnitTypeAbstractSettlement);
-        aiPlanSetDesiredPriority(gCivPopPlanID, 97);
-        aiPlanSetActive(gCivPopPlanID);
-    }
+    if (gCivPopPlanID < 0) return;
+
+    //Get our mainline villager PUID.
+    int gathererPUID=kbTechTreeGetUnitIDTypeByFunctionIndex(cUnitFunctionGatherer,0);
+    aiPlanSetVariableInt(gCivPopPlanID, cTrainPlanUnitType, 0, gathererPUID);
+    //Train off of economy escrow.
+    aiPlanSetEscrowID(gCivPopPlanID, cEconomyEscrowID);
+    //Default to 10.
+    aiPlanSetVariableInt(gCivPopPlanID, cTrainPlanNumberToMaintain, 0, number);
+    aiPlanSetVariableInt(gCivPopPlanID, cTrainPlanBuildFromType, 0, cUnitTypeAbstractSettlement);
+    aiPlanSetDesiredPriority(gCivPopPlanID, 97);
+    aiPlanSetActive(gCivPopPlanID);
 }
+
 //==============================================================================
 void initEcon() //setup the initial Econ stuff.
 {

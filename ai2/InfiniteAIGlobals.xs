@@ -502,3 +502,10 @@ extern int foodFishingPriority = 100;
 extern int favorPriority = 40;
 extern int woodPriority = 55;
 extern int goldPriority = 100;
+
+extern int rushBaseID = -1;
+extern int rushTempleID = -1;
+extern vector rushBaseLocation = cInvalidVector;
+extern vector rushTempleLocation = cInvalidVector;
+extern int rushBaseDefendPlanID = -1;
+extern int rushBaseAttackPlanID = -1;

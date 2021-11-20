@@ -268,7 +268,7 @@ inactive
     float scratch = 0.0;
     scratch = (-1.0 * cvRushBoomSlider) + 1.0; //  0 for extreme rush, 2 for extreme boom
     scratch = (scratch * 1.5) + 0.5; // 0.5 to 3.5
-    targetNum = kbGetAge() + scratch;      // 0 for extreme rush, 3 for extreme boom, +1 in cAge2, 2 in cAge3, +3 in cAge4
+    targetNum = kbGetAge() + scratch;  // 0 for extreme rush, 3 for extreme boom, +1 in cAge2, 2 in cAge3, +3 in cAge4
     if (kbGetAge() >= cAge4)
         targetNum = 5;
     if (targetNum > 5)
@@ -2001,7 +2001,7 @@ minInterval 20 //starts in cAge1
 
 rule buildRushTemple
 inactive
-minInterval 5 //starts in cAge1
+        minInterval 5 //starts in cAge1
 group lokiRushAge1
 {
     // stolen from buildSkyPassages
@@ -2011,7 +2011,7 @@ group lokiRushAge1
 
     vector offset = kbBaseGetLocation(cMyID, kbBaseGetMainID(cMyID)) - enemyTCvec;
     offset = xsVectorNormalize(offset);
-    vector target = enemyTCvec + (offset * 70.0);
+    vector target = enemyTCvec + (offset * 80.0);
 
     // Now, check if that's on ground, and just give up if it isn't
     // Figure out if it's on our enemy's areaGroup.  If not, step 5% closer until it is.
@@ -2044,12 +2044,14 @@ group lokiRushAge1
 
     int templePlanID=aiPlanCreate("build rush temple", cPlanBuild);
     if (templePlanID < 0)
+    {
+        echo("buildRushTemple - failed to create plan, bailing");
         return;
+    }
     aiPlanSetVariableInt(templePlanID, cBuildPlanBuildingTypeID, 0, cUnitTypeTemple);
-    aiPlanSetVariableInt(templePlanID, cBuildPlanMaxRetries, 0, 100);
-    // aiPlanSetVariableInt(templePlanID, cBuildPlanRetries, 0, 10);
+    aiPlanSetVariableInt(templePlanID, cBuildPlanMaxRetries, 0, 20);
     aiPlanSetVariableInt(templePlanID, cBuildPlanAreaID, 0, kbAreaGetIDByPosition(target));
-    aiPlanSetVariableInt(templePlanID, cBuildPlanNumAreaBorderLayers, 0, 1);
+    aiPlanSetVariableInt(templePlanID, cBuildPlanNumAreaBorderLayers, 0, 2);
     aiPlanSetDesiredPriority(templePlanID, 100);
     aiPlanSetEscrowID(templePlanID, cEconomyEscrowID);
     aiPlanAddUnitType(templePlanID, cBuilderType, 1, 1, 1);
@@ -2063,6 +2065,7 @@ group lokiRushAge1
     // move the ulfasark to the build area, which also scouts so placement can happen
     aiTaskUnitMove(ulfsarkID, target);
 
+    echo("buildRushTemple - created plan, exiting");
     xsDisableSelf();
 }
 
@@ -2073,16 +2076,50 @@ inactive
 minInterval 5 //starts in cAge1
 group lokiRushAge2
 {
-    // use createSimpleBuildPlan
-    // build it in the new base
-    // use the hersir and the ulfsark to get it up fast
+    // xs is not smart enough to compare against invalid vector, so just see if x is -1
+    if(rushTempleID < 0 || rushBaseID < 0 || equal(rushBaseLocation, cInvalidVector))
+    {
+        echo("buildRushLonghouse - rush data incomplete, bailing");
+        return;
+    }
+
+    int planID = aiPlanCreate("SimpleBuild"+kbGetUnitTypeName(cUnitTypeLonghouse), cPlanBuild);
+    if (planID < 0)
+    {
+        echo("buildRushLonghouse - failed to create plan, bailing");
+        return;
+    }
+
+    int numberBuilders = 2; // try to get the hersir if possible
+    aiPlanSetVariableInt(planID, cBuildPlanBuildingTypeID, 0, cUnitTypeLonghouse);
+    aiPlanSetVariableInt(planID, cBuildPlanNumAreaBorderLayers, 1, kbAreaGetIDByPosition(rushTempleLocation) );
+    aiPlanSetDesiredPriority(planID, 100);
+    aiPlanSetMilitary(planID, true);
+    aiPlanSetEconomy(planID, false);
+    aiPlanAddUnitType(planID, cBuilderType, 1, numberBuilders, numberBuilders * 10);
+    // explicitly invite hersir, since they won't join otherwise
+    aiPlanAddUnitType(planID, cUnitTypeHeroNorse, 1, numberBuilders, numberBuilders * 10);
+    aiPlanSetBaseID(planID, rushBaseID);
+    aiPlanSetVariableInt(planID, cBuildPlanMaxRetries, 0, 20);
+    // aiPlanSetVariableInt(planID, cBuildPlanInfluenceUnitTypeID, 0, cUnitTypeBuilding);
+    // aiPlanSetVariableVector(planID, cBuildPlanCenterPosition, 0, rushBaseLocation);
+    // aiPlanSetVariableVector(planID, cBuildPlanCenterPositionDistance, 1);
+    // aiPlanSetVariableFloat(planID, cBuildPlanInfluencePositionDistance, 0, 1);
+    // aiPlanSetVariableFloat(planID, cBuildPlanInfluenceUnitDistance, 0, 4);
+    // aiPlanSetVariableFloat(planID, cBuildPlanInfluenceUnitValue, 0, -5); // -5 points per unit
+    aiPlanSetActive(planID);
+
+    // createSimpleBuildPlan(cUnitTypeLonghouse, 1, 100, true, false, -1, rushTempleID, 2);
+    echo("buildRushLonghouse - created plan at base: " + rushBaseID + ", location: " + rushTempleLocation + " exiting");
+    echo("buildRushLonghouse - btw rush temple location is " + rushTempleLocation);
+    xsDisableSelf();
 }
 
 
 //==============================================================================
 rule buildArmory
 inactive
-        minInterval 47 //starts in cAge1
+minInterval 47         //starts in cAge1
 {
 
     if (gTransportMap == true)

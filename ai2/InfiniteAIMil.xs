@@ -2950,6 +2950,8 @@ inactive
             return;
         MessageRel(cPlayerRelationAlly, AttackTarget, aiGetMostHatedPlayerID());
     }
+    echo("updatePlayerToAttack - actualPlayerID: " + actualPlayerID);
+    echo("updatePlayerToAttack - player to attack: " + cvPlayerToAttack);
 }
 
 
@@ -3511,5 +3513,299 @@ void gpHandler(int powerProtoID=-1)
         if (kbIsPlayerAlly(i) == true)
             continue;
         aiCommsSendStatement(i, type, -1);
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//=================================================================================================================================
+// getUnitFromPlayer(int playerID, int unitType, int action, vector center)
+// 
+// Returns a unit of the given player,specified type, doing the specified action.
+// Defaults = any unit, any action.
+// Searches units owned by this player only, can include buildings.
+// If a location is specified, the nearest matching unit is returned.
+//=================================================================================================================================
+int getUnitFromPlayer(int playerID = -1, int unitType = -1, vector center = vector(-1,-1,-1), float range = -1.0, bool visible = true)
+{
+    if(visible==false)
+    {
+        xsSetContextPlayer(playerID);
+    }
+    static int unitQueryID = -1;
+    if(unitQueryID==-1)
+    {
+        unitQueryID = kbUnitQueryCreate("getUnitFromPlayer");
+    }
+    // Define a query to get all matching units
+    if (unitQueryID != -1)
+    {
+        if(playerID != -1)
+        {
+            kbUnitQuerySetPlayerID(unitQueryID, playerID);
+        }
+        else
+        {
+            kbUnitQuerySetPlayerID(unitQueryID, cMyID);   // only my units
+        }
+        if (unitType != -1)
+        {
+            kbUnitQuerySetUnitType(unitQueryID, unitType);   // only if specified
+        }
+        if (center != vector(-1,-1,-1))
+        {
+            kbUnitQuerySetPosition(unitQueryID, center);
+            if(range != -1.0)
+            {
+                kbUnitQuerySetMaximumDistance(unitQueryID, range);
+            }
+            kbUnitQuerySetAscendingSort(unitQueryID, true);
+        }
+        kbUnitQuerySetState(unitQueryID, cUnitStateAlive);
+        kbUnitQuerySetSeeableOnly(unitQueryID,visible);
+    }
+    else
+    {
+        xsSetContextPlayer(cMyID);
+        return(-1);
+    }
+
+    kbUnitQueryResetResults(unitQueryID);
+    kbUnitQueryExecute(unitQueryID);
+    kbUnitQuerySetState(unitQueryID, cUnitStateBuilding);   // Add buildings in process
+    kbUnitQueryExecute(unitQueryID);
+    kbUnitQuerySetState(unitQueryID, cUnitStateAliveOrBuilding);
+    int count  = kbUnitQueryExecute(unitQueryID);
+    // Pick a unit and return its ID, or return -1.
+    if(count > 0)
+    {
+        int retval = -1;
+        if (center != vector(-1,-1,-1))
+        {
+            retval = kbUnitQueryGetResult(unitQueryID, 0);
+            xsSetContextPlayer(cMyID);
+            return(retval);   // closest unit
+        }
+        else
+        {
+            retval = kbUnitQueryGetResult(unitQueryID, aiRandInt(count));
+            xsSetContextPlayer(cMyID);
+            return(retval);   // get the ID of a random unit
+        }
+    }
+    else
+    {
+        xsSetContextPlayer(cMyID);
+        return(-1);
+    }
+}
+
+
+
+
+
+
+
+int getUnitsFromPlayer(int playerID = -1, int unitType = -1, vector center = vector(-1,-1,-1), float range = -1.0, bool visible = true)
+{
+    if(visible==false)
+    {
+        xsSetContextPlayer(playerID);
+    }
+    static int unitQueryID = -1;
+    if(unitQueryID==-1)
+    {
+        unitQueryID = kbUnitQueryCreate("getUnitsFromPlayer");
+    }
+    // Define a query to get all matching units
+    if (unitQueryID != -1)
+    {
+        if(playerID != -1)
+        {
+            kbUnitQuerySetPlayerID(unitQueryID, playerID);
+        }
+        else
+        {
+            kbUnitQuerySetPlayerID(unitQueryID, cMyID);   // only my units
+        }
+        if (unitType != -1)
+        {
+            kbUnitQuerySetUnitType(unitQueryID, unitType);   // only if specified
+        }
+        if (center != vector(-1,-1,-1))
+        {
+            kbUnitQuerySetPosition(unitQueryID, center);
+            if(range != -1.0)
+            {
+                kbUnitQuerySetMaximumDistance(unitQueryID, range);
+            }
+            kbUnitQuerySetAscendingSort(unitQueryID, true);
+        }
+        kbUnitQuerySetState(unitQueryID, cUnitStateAlive);
+        kbUnitQuerySetSeeableOnly(unitQueryID,visible);
+    }
+    else
+    {
+        xsSetContextPlayer(cMyID);
+        return(-1);
+    }
+
+    kbUnitQueryResetResults(unitQueryID);
+    kbUnitQueryExecute(unitQueryID);
+    kbUnitQuerySetState(unitQueryID, cUnitStateBuilding);   // Add buildings in process
+    return(unitQueryID);
+}
+
+
+
+//=================================================================================================================================
+// wallInBuilding(int buildingID, int numberGates)
+// Doesn't really seem to work for enemy markets
+//=================================================================================================================================
+bool wallInBuilding(int buildingID = -1, int numberGates = 4)
+{
+    echo("wallInBuilding");
+    if(buildingID == -1)
+    {
+        return(false);
+    }
+    
+    const int cBuildPlanWallInBuilding = 0;
+    // Check whether we're already planning on walling this building
+    int numberPlans = aiPlanGetNumber(cPlanBuildWall, -1, true);
+    for(i=0;< numberPlans)
+    {
+        int plan = aiPlanGetIDByIndex(cPlanBuildWall, -1, true, i);
+        // If there is one quit
+        if(aiPlanGetUserVariableInt(plan,cBuildPlanWallInBuilding,0) == buildingID)
+        {
+            return(false);
+        } 
+    }
+    
+    // Create the wall in plan 
+    int planID = aiPlanCreate("Wall in building: "+buildingID,cPlanBuildWall);
+    if(planID!=-1)
+    {
+        echo("wallInBuilding: created wall plan");
+
+        aiPlanSetVariableInt(planID,cBuildWallPlanWallType, 0, cBuildWallPlanWallTypeArea);
+        aiPlanSetVariableInt(planID,cBuildWallPlanNumberOfGates,0,numberGates);
+        
+        // Starting area
+        aiPlanSetVariableInt(planID,cBuildWallPlanAreaIDs,0,kbAreaGetIDByPosition(kbUnitGetPosition(buildingID)));
+        
+        // We need to handle gold and settlement areas
+        int numberAreas = 1;
+        
+        for(i=0;< numberAreas)
+        {
+            int currentArea   = aiPlanGetVariableInt(planID,cBuildWallPlanAreaIDs,i);
+            int numberNeighbours = kbAreaGetNumberBorderAreas(currentArea);
+            for(i2=0;< numberNeighbours)
+            {
+                int neighbourArea = kbAreaGetBorderAreaID(currentArea,i2);
+                int neighbourType = kbAreaGetType(neighbourArea);
+                // If it's not of type gold or settlement skip it
+                if(neighbourType != cAreaTypeGold&&neighbourType != cAreaTypeSettlement)
+                {
+                    // Do we have this area already?
+                    for(i3 = 0; < numberAreas)
+                    {
+                        int testArea = aiPlanGetVariableInt(planID,cBuildWallPlanAreaIDs,i3);
+                        if(testArea == neighbourArea)
+                        {
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        int numberBuilders = 2;
+        if(cMyCulture == cCultureAtlantean)
+        {
+            numberBuilders = 1;
+        }
+        aiPlanSetEscrowID(planID,cEconomyEscrowID);
+        aiPlanSetDesiredPriority(planID,100);
+        aiPlanAddUnitType(planID,kbTechTreeGetUnitIDTypeByFunctionIndex(cUnitFunctionBuilder, 0),1,numberBuilders,numberBuilders);
+        aiPlanAddUserVariableInt(planID,cBuildPlanWallInBuilding, "Wall in building ID", 1);
+        aiPlanSetUserVariableInt(planID,cBuildPlanWallInBuilding,0,buildingID);
+        aiEcho("Walling in "+ buildingID);
+        return(aiPlanSetActive(planID));
+    }
+    return(false);
+}
+
+
+
+
+//=================================================================================================================================
+// wallEnemyMarket
+//=================================================================================================================================
+rule wallEnemyMarket
+minInterval 30
+group classicalRule
+inactive
+{
+    echo("wallEnemyMarket");
+    int playerID                 = aiGetMostHatedPlayerID();
+    int marketIDs   = getUnitsFromPlayer(playerID,cUnitTypeMarket);
+    int size                     = kbUnitQueryNumberResults(marketIDs);
+    vector enemyMainBaseLocation = kbBaseGetLocation(playerID,kbBaseGetMainID(playerID));
+    vector testPosition = kbUnitGetPosition(getUnitFromPlayer(cMyID, cUnitTypeAbstractVillager, enemyMainBaseLocation));
+    // Wall every building that is not in the main base
+    for(i=0;< size)
+    {
+        int marketID          = kbUnitQueryGetResult(marketIDs,i);
+        vector marketPosition = kbUnitGetPosition(marketID);
+        if(pointInRangeOfPoint(marketPosition, enemyMainBaseLocation, 75.0))
+        {
+            continue;
+        }
+        
+        // Check if we've blocked it
+        if(kbCanSimPath(testPosition,marketPosition,cUnitTypeHoplite,6.0))
+        {
+            // It could be that our testPosition is inside the walls
+            if(kbCanSimPath(testPosition,enemyMainBaseLocation,cUnitTypeHoplite,6.0))
+            {
+                echo("wallEnemyMarket: found market");
+                wallInBuilding(marketID,0);
+            }
+        }
     }
 }

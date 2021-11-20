@@ -3,6 +3,9 @@
 
 include "InfiniteAIglobals.xs"; // global and const declarations
 include "InfiniteAIUtils.xs";
+include "InfiniteAIVector2.xs";
+// include "InfiniteAIArray.xs";
+// include "InfiniteAIUnitQuery.xs";
 include "InfiniteAIPers.xs"; // personality
 include "InfiniteAIExtra.xs"; // Reth rules
 include "InfiniteAIBuild.xs"; // BuildRules
