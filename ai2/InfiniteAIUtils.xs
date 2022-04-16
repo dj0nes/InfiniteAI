@@ -7,10 +7,18 @@ void echo(string msg="") {
 
 bool initInfinitePopModeCheck(void) {
     infinitePopMode = kbGetPop() == 0;
+    echo("infinitePopMode: "+infinitePopMode);
 }
 
 void resetGlobalsWithInfinitePop(void) {
+    if (infinitePopMode == false)
+    {
+        return;
+    }
+
     gMaxTradeCarts = 100; // I'm sorry, CPU
+    echo("gMaxTradeCarts: "+gMaxTradeCarts);
+    
 }
 
 
@@ -920,6 +928,11 @@ bool createSimpleBuildPlan(int puid=-1, int number=1, int pri=100,
 //==============================================================================
 int getSoftPopCap(void) //Calculate our pop limit if we had all houses built
 {
+
+    if (infinitePopMode == true)
+    {
+        return(999);
+    }
 
     int houseProtoID = cUnitTypeHouse;
     if (cMyCulture == cCultureAtlantean)
