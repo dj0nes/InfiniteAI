@@ -1,5 +1,8 @@
 extern bool infinitePopMode = false; // for check if we have infinite population
 extern bool gLogUpdateEMAllAges = false; // for check if we have infinite population
+extern int gAge1AgeUpAfterMinutes = 3;
+extern int gAge2AgeUpAfterMinutes = 10;
+extern int gGatherGoalPlanID=-1;
 
 //==============================================================================
 //Map-Related Globals.

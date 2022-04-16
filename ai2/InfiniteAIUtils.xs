@@ -1111,14 +1111,16 @@ bool AgingUp()
 }
 bool ShouldIAgeUp()
 {
-    if ((kbGetAge() > cAge3) || (kbGetAge() == cAge1))
-        return(false);
-    if ((kbGetAge() == cAge2) && (xsGetTime() > 15*60*1000))
+    if ((kbGetAge() == cAge1) && (xsGetTime() > gAge1AgeUpAfterMinutes*60*1000))
         return(true);
+    if ((kbGetAge() == cAge2) && (xsGetTime() > gAge2AgeUpAfterMinutes*60*1000))
+        return(true);
+    if ((kbGetAge() > cAge3))
+        return(false);
 
     for (i=0; < cNumberPlayers)
     {
-        if ((i == cMyID) || (kbIsPlayerAlly(i) == true))
+        if ((i == cMyID))
             continue;
         if (kbGetAgeForPlayer(i) > kbGetAge())
             return(true);
