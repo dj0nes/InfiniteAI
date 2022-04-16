@@ -321,6 +321,16 @@ group reth
             civPopTarget = 25;
         milPopTarget = getSoftPopCap() - civPopTarget;
     }
+
+    if (gLogUpdateEMAllAges == true)
+    {
+        echo("updateEMAllAges.aiGetAvailableEconomyPop: " + aiGetAvailableEconomyPop());
+        echo("updateEMAllAges.civPopTarget: " + civPopTarget);
+        echo("updateEMAllAges.milPopTarget: " + milPopTarget);
+        echo("updateEMAllAges.econPercent: " + econPercent);
+        echo("updateEMAllAges.econEscrow: " + econEscrow);
+    }
+    
     updateEM(civPopTarget, milPopTarget, econPercent, 0.20, econEscrow, econEscrow, econEscrow, econEscrow);
 }
 

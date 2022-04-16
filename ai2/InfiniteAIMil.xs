@@ -489,8 +489,8 @@ inactive
             {
                 static int countA = 0;
                 float distanceA = 30.0;
-                echo("gEnemySettlementAttPlanID:  "+attackPlanID+"");
-                echo("NumInPlan:  "+numMilUnitsInPlan+"");
+                echo("monitorAttPlans.gEnemySettlementAttPlanID:  "+attackPlanID+"");
+                echo("monitorAttPlans.NumInPlan:  "+numMilUnitsInPlan+"");
                 if (killSettlementAttPlanCount != -1)
                 {
                     if (planState < cPlanStateAttack)
@@ -736,8 +736,8 @@ inactive
             {
                 static int countD = 0;
                 float distanceD = 25.0;
-                echo("gLandAttackPlanID:  "+attackPlanID+"");
-                echo("NumInPlan:  "+numMilUnitsInPlan+"");
+                echo("monitorAttPlans.gLandAttackPlanID:  "+attackPlanID+"");
+                echo("monitorAttPlans.gLandAttackPlan.NumInPlan:  "+numMilUnitsInPlan+"");
                 if (killLandAttPlanCount != -1)
                 {
                     if (planState < cPlanStateAttack)
@@ -752,7 +752,7 @@ inactive
                         {
                             aiPlanDestroy(attackPlanID);
                             killLandAttPlanCount = -1;
-                            echo("Killing gLandAttackPlanID, Count >=4");
+                            echo("monitorAttPlans.gLandAttackPlan.Killing gLandAttackPlanID, Count >=4");
                             continue;
                         }
                         killLandAttPlanCount = killLandAttPlanCount + 1;
@@ -795,7 +795,7 @@ inactive
                             if (((numEnemyMilUnitsNearMBInR70 > 20) || (numEnemyMilUnitsNearDefBInR40 > 20)) && (attPlanPriority < 20))
                             {
                                 aiPlanDestroy(attackPlanID);
-                                echo ("destroying gLandAttackPlanID as there are too many enemies 1");
+                                echo ("monitorAttPlans.gLandAttackPlan.destroying gLandAttackPlanID as there are too many enemies 1");
                                 continue;
                             }
                             else
@@ -2951,7 +2951,7 @@ inactive
         MessageRel(cPlayerRelationAlly, AttackTarget, aiGetMostHatedPlayerID());
     }
     echo("updatePlayerToAttack - actualPlayerID: " + actualPlayerID);
-    echo("updatePlayerToAttack - player to attack: " + cvPlayerToAttack);
+    // echo("updatePlayerToAttack - preset global player to attack, -1 means ignore and use actualPlayerID: " + cvPlayerToAttack);
 }
 
 

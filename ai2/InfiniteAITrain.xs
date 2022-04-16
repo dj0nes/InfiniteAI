@@ -84,6 +84,9 @@ inactive
     aiPlanSetDesiredPriority(trainTradeUnitPlanID, 96);
     aiPlanSetVariableBool(trainTradeUnitPlanID, cTrainPlanUseMultipleBuildings, 0, true);
     aiPlanSetActive(trainTradeUnitPlanID);
+    echo("maintainTradeUnits.numTradeUnits: "+numTradeUnits);
+    echo("maintainTradeUnits.tradeTargetPop: "+tradeTargetPop);
+    echo("maintainTradeUnits.cTrainPlanNumberToTrain: "+cTrainPlanNumberToTrain);
 }
 
 //==============================================================================

@@ -1,4 +1,5 @@
 extern bool infinitePopMode = false; // for check if we have infinite population
+extern bool gLogUpdateEMAllAges = false; // for check if we have infinite population
 
 //==============================================================================
 //Map-Related Globals.

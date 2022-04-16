@@ -845,7 +845,7 @@ void updateGatherGoals(void)
     echo("updateGatherGoals ran");
 }
 
-include "scripted/loki_attacker.xs";
+
 void init(void)
 {
     // First and foremost: find someone to hate

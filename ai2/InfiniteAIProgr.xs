@@ -26,10 +26,10 @@ void progressAge4Handler(int age=3)
 
 //==============================================================================
 rule unPauseAge2
-        minInterval 180 //starts in cAge1
+        minInterval 60 //starts in cAge1
 inactive
 {
-
+    echo("unPauseAge2");
     if (gAge2ProgressionPlanID == -1)
     {
         xsDisableSelf();
@@ -46,7 +46,7 @@ rule unPauseAge3
 minInterval 150 //starts in cAge2
 inactive
 {
-
+    echo("unPauseAge3");
     if (gAge2ProgressionPlanID == -1)
     {
         xsDisableSelf();
@@ -77,11 +77,14 @@ inactive
         //Unpause after a brief amount of time.
         if ( (cvMapSubType != NOMADMAP) && (cvMapSubType != WATERNOMADMAP) && (cvMapSubType != VINLANDSAGAMAP) )
             xsEnableRule("unPauseAge2");
+            echo("age1Progress cvMapSubType didn't match map exclusions, enabling unPauseAge2");
+
         //If we have a lot of resources, assume we want to go up fast.
         if (kbResourceGet(cResourceWood) >= 1000)
             xsSetRuleMinInterval("unPauseAge2", 5);
     }
     xsDisableSelf();
+    echo("age1Progress ran");
 }
 
 //==============================================================================
