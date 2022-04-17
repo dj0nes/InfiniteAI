@@ -645,6 +645,7 @@ void initRushBehavior(void)
     }
     //new stuff for new land attack rule
     gRushSize = rushSize / 3;
+    echo("gRushSize: " + gRushSize);
     //set the gRushCount in order to enable the tech rules if we only have an idle attack goal in cAge2
     if (gRushCount > 0)
     {

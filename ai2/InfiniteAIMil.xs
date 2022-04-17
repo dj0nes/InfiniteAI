@@ -1964,13 +1964,21 @@ inactive
     }
     int currentPop = kbGetPop();
     int currentPopCap = kbGetPopCap();
-
-    if ((numEnemyMilUnitsNearMBInR80 > 8) || (currentPop <= currentPopCap - 14) ||
-        (currentPop < 100) || (aiPlanGetNumberUnits(gDefendPlanID, cUnitTypeHumanSoldier) < 4)
-        || (gEnemyWonderDefendPlan > 0) || (numEnemyTitansNearMBInR60 > 0) || (numAttEnemyTitansNearMBInR85 > 0)
-        || (numEnemyTitansNearDefBInR35 > 0) || (numAttEnemyTitansNearDefBInR55 > 0))
+    bool nonInfiniteModeConditions = infinitePopMode == false && ((currentPop <= currentPopCap - 14) || (currentPop < 100));
+    bool titanConditions = (numEnemyTitansNearMBInR60 > 0) || (numAttEnemyTitansNearMBInR85 > 0)
+        || (numEnemyTitansNearDefBInR35 > 0) || (numAttEnemyTitansNearDefBInR55 > 0);
+    bool defendPlanConditions = (aiPlanGetNumberUnits(gDefendPlanID, cUnitTypeHumanSoldier) < 4);
+    bool enemyUnitConditions = (numEnemyMilUnitsNearMBInR80 > 8);
+    bool enemyWonderConditons = (gEnemyWonderDefendPlan > 0);
+    if (enemyUnitConditions || nonInfiniteModeConditions || defendPlanConditions
+        || enemyWonderConditons || titanConditions)
     {
-        echo("createRaidingParty: skipping raiding party creation");
+        echo("createRaidingParty: skipping raiding party creation, conditions:");
+        echo("createRaidingParty: nonInfiniteModeConditions: " + nonInfiniteModeConditions);
+        echo("createRaidingParty: defendPlanConditions: " + defendPlanConditions);
+        echo("createRaidingParty: enemyUnitConditions: " + enemyUnitConditions);
+        echo("createRaidingParty: enemyWonderConditons: " + enemyWonderConditons);
+        echo("createRaidingParty: defendPlanConditions.defendPlanID" +gDefendPlanID+ ", human soldier count: " + aiPlanGetNumberUnits(gDefendPlanID, cUnitTypeHumanSoldier));
         return;
     }
 
@@ -2259,7 +2267,8 @@ inactive
         return;
     }
 
-    int requiredUnits = kbGetPopCap() / 10;
+    // TESTING 2022/04/16
+    int requiredUnits = 10;
     if ((kbGetAge() == cAge2) && (gRushAttackCount < gRushCount) && (ShouldIAgeUp() == false))
     {
         if ((gRushCount > 1) && (gRushAttackCount == 0))
@@ -2952,6 +2961,14 @@ inactive
     }
     echo("updatePlayerToAttack - actualPlayerID: " + actualPlayerID);
     // echo("updatePlayerToAttack - preset global player to attack, -1 means ignore and use actualPlayerID: " + cvPlayerToAttack);
+    echo("updatePlayerToAttack - cNumberPlayers: " + cNumberPlayers);
+    
+    // yes, apparently this is just set to 3, even if there are two players
+    if (cNumberPlayers == 3)
+    {
+        echo("updatePlayerToAttack: only one other player, disabling rule");
+        xsDisableSelf();
+    }
 }
 
 
@@ -3778,10 +3795,9 @@ bool wallInBuilding(int buildingID = -1, int numberGates = 4)
 //=================================================================================================================================
 rule wallEnemyMarket
 minInterval 30
-group classicalRule
+// group classicalRule
 inactive
 {
-    echo("wallEnemyMarket");
     int playerID                 = aiGetMostHatedPlayerID();
     int marketIDs   = getUnitsFromPlayer(playerID,cUnitTypeMarket);
     int size                     = kbUnitQueryNumberResults(marketIDs);

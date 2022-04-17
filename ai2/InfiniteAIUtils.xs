@@ -8,6 +8,7 @@ void echo(string msg="") {
 bool initInfinitePopModeCheck(void) {
     infinitePopMode = kbGetPop() == 0;
     echo("infinitePopMode: "+infinitePopMode);
+    echo("kbGetPopCap: "+kbGetPopCap());
 }
 
 void resetGlobalsWithInfinitePop(void) {
@@ -17,6 +18,7 @@ void resetGlobalsWithInfinitePop(void) {
     }
 
     gMaxTradeCarts = 100; // I'm sorry, CPU
+    defWantedCaravans = gMaxTradeCarts;
     echo("gMaxTradeCarts: "+gMaxTradeCarts);
     
 }

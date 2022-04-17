@@ -189,7 +189,7 @@ group reth
     }
     else if ((kbGetAge() < cAge2) && (aiGetWorldDifficulty() >= cDifficultyModerate))
     {
-        civPopTarget = 25;
+        civPopTarget = 12; // lower civPopTarget to encourage faster aging up
         milPopTarget = 60;
     }
     else if (aiGetWorldDifficulty() <= cDifficultyModerate)
@@ -522,7 +522,7 @@ group reth
                 }
                 kbEscrowFlush(cEconomyEscrowID, cResourceGold, true);
                 kbEscrowFlush(cMilitaryEscrowID, cResourceGold, true);
-                echo("Flushing wood and gold escrow");
+                echo("Flushing wood and gold escrow for gEarlySettlementTarget building");
             }
         }
     }

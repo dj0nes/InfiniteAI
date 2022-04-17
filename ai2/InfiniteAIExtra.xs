@@ -1531,8 +1531,9 @@ minInterval 12
 inactive
 {
     if (ShouldIAgeUp() == true) {
-        echo("LaunchAttacks: skipping because I should age up");
-        return;
+        echo("LaunchAttacks: I should age up but YOLO");
+        // echo("LaunchAttacks: skipping because I should age up");
+        // return;
     }
     int mainBaseID = kbBaseGetMainID(cMyID);
     vector mainBaseLocation = kbBaseGetLocation(cMyID, mainBaseID);
